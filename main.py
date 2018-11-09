@@ -7,6 +7,5 @@ from tools.data import DreemDataset
 args = Parser().parse()
 use_cuda = torch.cuda.is_available()
 
-train_set = DreemDataset('dataset/train.h5', 'dataset/train_y.csv')
+train_set = DreemDataset('dataset/train.h5', 'dataset/train_y.csv', keep_datasets=['eeg_2', 'eeg_4'])
 
-print(train_set[0])
