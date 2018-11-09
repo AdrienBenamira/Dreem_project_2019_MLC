@@ -1,0 +1,8 @@
+data/
+config/
+!config/default.json
+
+.idea/
+
+*.pyc
+__pycache__/
