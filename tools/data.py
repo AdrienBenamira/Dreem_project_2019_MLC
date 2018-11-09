@@ -11,11 +11,11 @@ class DreemDataset:
     length = None
     datasets = {}
 
-    def __init__(self, data_path, target_path, keep_datasets=None):
+    def __init__(self, data_path, target_path=None, keep_datasets=None):
         """
         Args:
             data_path: path to data
-            target_path: path to labels
+            target_path: path to labels, if None, no labels
             keep_datasets: default None, if list, only keep the data sets in the list.
                 Available datasets:
                 * eeg_1 - EEG in frontal position sampled at 50 Hz -> 1500 values
@@ -30,14 +30,13 @@ class DreemDataset:
                 * accelerometer_z - Accelerometer along z axis sampled at 10 Hz -> 300 values
                 * pulse_oximeter_infrared - Pulse oximeter infrared channel sampled at 10 Hz -> 300 values
         """
-        self.data_path = data_path
-        self.target_path = target_path
         self.keep_datasets = keep_datasets
-        self._load_data()
-        self._load_target()
+        self._load_data(data_path)
+        if target_path is not None:
+            self._load_target(target_path)
 
-    def _load_data(self):
-        path = os.path.abspath(os.path.join(os.curdir, self.data_path))
+    def _load_data(self, data_path):
+        path = os.path.abspath(os.path.join(os.curdir, data_path))
         self.data = h5py.File(path, 'r')
         self.accelerometer_x = self.data['accelerometer_x']
         for item in self.data:
@@ -46,8 +45,8 @@ class DreemDataset:
                     self.length = self.data[item].shape[0]
                 self.datasets[item] = self.data[item]
 
-    def _load_target(self):
-        path = os.path.abspath(os.path.join(os.curdir, self.target_path))
+    def _load_target(self, target_path):
+        path = os.path.abspath(os.path.join(os.curdir, target_path))
         with open(path, 'r') as f:
             reader = csv.reader(f)
             self.targets = {int(i): int(j) for i, j in list(reader)[1:]}
@@ -59,7 +58,7 @@ class DreemDataset:
         data = []
         for dataset in self.datasets.values():
             data.extend(dataset[item])
-        return torch.tensor(data), self.targets[item]
+        return (torch.tensor(data), self.targets[item]) if self.targets is not None else torch.tensor(data)
 
     def __len__(self):
         return self.length
