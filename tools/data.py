@@ -133,8 +133,7 @@ class DreemDataset:
         self.data.close()
 
     def __enter__(self):
-        self.init()
-        return self
+        return self.init()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
