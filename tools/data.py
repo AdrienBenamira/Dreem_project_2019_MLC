@@ -56,12 +56,12 @@ class DreemDatasets:
 
     def __enter__(self):
         # Start by initialising the first one to get the size of the dataset
-        self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets)
+        self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets).init()
         # Get the split
         keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val)
         self.train.set_keys_to_keep(keys_train)
         # Initialize the second one
-        self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val)
+        self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val).init()
         return self.train, self.val
 
     def __exit__(self, *args):
@@ -97,10 +97,15 @@ class DreemDataset:
         """
         self.keys_to_keep = keys_to_keep
         self.keep_datasets = keep_datasets
-        self._load_data(data_path)
-        if target_path is not None:
-            self._load_target(target_path)
-        self.length = self.length if keys_to_keep is None else len(keys_to_keep)
+        self.data_path = data_path
+        self.target_path = target_path
+
+    def init(self):
+        self._load_data(self.data_path)
+        if self.target_path is not None:
+            self._load_target(self.target_path)
+        self.length = self.length if self.keys_to_keep is None else len(self.keys_to_keep)
+        return self
 
     def set_keys_to_keep(self, keys_to_keep: List[int]):
         self.keys_to_keep = keys_to_keep
@@ -122,7 +127,17 @@ class DreemDataset:
             self.targets = {int(i): int(j) for i, j in list(reader)[1:]}
 
     def close(self):
+        """
+        Closes the dataset
+        """
         self.data.close()
+
+    def __enter__(self):
+        self.init()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
     def __del__(self):
         self.close()
