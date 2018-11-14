@@ -2,6 +2,7 @@ config/
 !config/default.json
 dataset/
 !dataset/readme.md
+builds/
 
 .idea/
 

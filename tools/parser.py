@@ -10,6 +10,12 @@ class Parser:
                                  help="Batch size")
         self.parser.add_argument('-s', '--seed', type=float, default=1,
                                  help="Seed")
+        self.parser.add_argument('--epochs', type=int, default=10, metavar='N',
+                                 help='number of epochs to train (default: 10)')
+        self.parser.add_argument('--lr', type=float, default=0.1, metavar='LR',
+                                 help='learning rate (default: 0.01)')
+        self.parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
+                                 help='SGD momentum (default: 0.5)')
 
     def parse(self):
         return self.parser.parse_args()
