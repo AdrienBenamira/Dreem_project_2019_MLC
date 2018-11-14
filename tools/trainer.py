@@ -50,15 +50,15 @@ class Trainer:
             self.optimizer.step()
             if batch_id % self.log_every == 0:
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                    epoch, batch_id * len(data_50hz), len(self.train_loader),
-                           100. * batch_id / len(self.train_loader), loss.data.item()))
+                    epoch, batch_id * len(data_50hz), len(self.train_loader.dataset),
+                           100. * batch_id / len(self.train_loader.dataset), loss.data.item()))
 
     def step_val(self, epoch):
         self.model_50hz.eval()
         self.model_10hz.eval()
         validation_loss = 0
         correct = 0
-        for data, target in self.val_loader:
+        for batch_id, (data_50hz, data_10hz, target) in enumerate(self.train_loader):
             if use_cuda:
                 data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
             out_50hz = self.model_50hz(data_50hz)

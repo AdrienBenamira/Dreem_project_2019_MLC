@@ -152,10 +152,11 @@ class DreemDataset:
         data_50hz = []
         data_10hz = []
         for dataset in self.datasets.values():
-            if len(dataset[item]) == 1500:
-                data_50hz.append(dataset[item])
+            data = dataset[item]
+            if len(data) == 1500:
+                data_50hz.append(data)
             else:
-                data_10hz.append(dataset[item])
+                data_10hz.append(data)
         return (torch.tensor(data_50hz), torch.tensor(data_10hz),
                 self.targets[item]) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
 

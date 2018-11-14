@@ -16,8 +16,8 @@ use_datasets = ['eeg_1', 'eeg_3', 'eeg_4', 'eeg_7', 'accelerometer_x', 'accelero
 number_groups = 4
 out_features = 100
 # in_channels are 4s because 4 sampled at 50Hz and 4 sampled at 10Hz
-model_50hz = CNN(in_features=1500, out_features=out_features, in_channels=4, number_groups=number_groups, size_groups=2)
-model_10hz = CNN(in_features=300, out_features=out_features, in_channels=4, number_groups=number_groups, size_groups=2)
+model_50hz = CNN(in_features=1500, out_features=out_features, in_channels=4, number_groups=number_groups, size_groups=1)
+model_10hz = CNN(in_features=300, out_features=out_features, in_channels=4, number_groups=number_groups, size_groups=1)
 classifier = MLPClassifier(in_features=out_features * 2, out_features=5)
 
 if use_cuda:
