@@ -1,4 +1,4 @@
-# Dreep Competition
+# Dreem Competition
 
 ## Install
 Create a `builds` directory.
