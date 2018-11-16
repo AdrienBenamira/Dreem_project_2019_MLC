@@ -71,8 +71,8 @@ class Trainer:
 
         validation_loss /= len(self.val_loader)
         print('\nValidation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-            validation_loss, correct, len(self.val_loader),
-            100. * correct / len(self.val_loader)))
+            validation_loss, correct, len(self.val_loader.dataset),
+            100. * correct / len(self.val_loader.dataset)))
 
     def train(self, n_epochs: int):
         """
