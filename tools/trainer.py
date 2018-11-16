@@ -58,6 +58,7 @@ class Trainer:
         self.model_10hz.eval()
         validation_loss = 0
         correct = 0
+        k = 0
         for batch_id, (data_50hz, data_10hz, target) in enumerate(self.val_loader):
             if use_cuda:
                 data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
@@ -68,8 +69,9 @@ class Trainer:
             # get the index of the max log-probability
             pred = out.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+            k += 1
 
-        validation_loss /= len(self.val_loader.dataset)
+        validation_loss /= k
         print('\nValidation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
             validation_loss, correct, len(self.val_loader.dataset),
             100. * correct / len(self.val_loader.dataset)))
