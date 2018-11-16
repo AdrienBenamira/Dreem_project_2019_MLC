@@ -27,9 +27,9 @@ if use_cuda:
 
 # Use context manager to close the datasets when we're finished!
 with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv', keep_datasets=use_datasets,
-                   split_train_val=0.8, seed=args.seed) as (train_set, val_set):
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
-    test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size)
+                   split_train_val=0.8, seed=args.seed, size=5000) as (train_set, val_set):
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
+    test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, num_workers=1)
     criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
     optimizer = optim.SGD([{'params': model_50hz.parameters()},
                            {'params': model_10hz.parameters()},

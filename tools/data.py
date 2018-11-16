@@ -8,19 +8,22 @@ from typing import List, Tuple
 __all__ = ['data_transformer', 'DreemDataset', 'DreemDatasets']
 
 
-def split_train_validation(len_dataset: int, percent_train: float, seed: float = None) -> Tuple[List[int], List[int]]:
+def split_train_validation(len_dataset: int, percent_train: float,
+                           seed: float = None, length: int = None) -> Tuple[List[int], List[int]]:
     """
     Splits between train set and validation set
     Args:
         len_dataset: size of the data set
         percent_train: splits according to this percentage.
         seed: Seed to use
+        length: Size max of the dataset
 
     Returns: couple of indexes for train set and validation set
 
     """
     if seed is not None:
         np.random.seed(seed)
+    len_dataset = len_dataset if length is None or length > len_dataset else length
     items = np.arange(0, len_dataset, dtype=np.int)
     np.random.shuffle(items)
     split = int(percent_train * len_dataset)
@@ -33,7 +36,7 @@ class DreemDatasets:
     """
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
-                 split_train_val: float = 0.8, seed: float = None):
+                 split_train_val: float = 0.8, seed: float = None, size=None):
         """
         Args:
             data_path: path to data
@@ -53,18 +56,20 @@ class DreemDatasets:
                 * pulse_oximeter_infrared - Pulse oximeter infrared channel sampled at 10 Hz -> 300 values
             split_train_val: percentage of dataset to keep for the training set
             seed: Seed to use.
+            size: Size of the dataset to keep
         """
         self.seed = seed
         self.data_path = data_path
         self.target_path = target_path
         self.keep_datasets = keep_datasets
         self.split_train_val = split_train_val
+        self.size = size
 
     def __enter__(self):
         # Start by initialising the first one to get the size of the dataset
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets).init()
         # Get the split
-        keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed)
+        keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed, self.size)
         self.train.set_keys_to_keep(keys_train)
         # Initialize the second one
         self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val).init()
