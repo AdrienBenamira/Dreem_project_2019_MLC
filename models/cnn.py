@@ -52,8 +52,8 @@ class CNN(nn.Module):
             for g in range(self.size_groups):
                 # Use dilation to use the signal at different granularity (diff freq)
                 conv_transformation = nn.Conv1d(prev_n_channel, self.hidden_channels[k], self.kernel_sizes[k],
-                                                dilation=2 ** k)
-                conv_gating = nn.Conv1d(prev_n_channel, self.hidden_channels[k], self.kernel_sizes[k], dilation=2 ** k)
+                                                dilation=2)
+                conv_gating = nn.Conv1d(prev_n_channel, self.hidden_channels[k], self.kernel_sizes[k], dilation=2)
                 if use_cuda:
                     conv_transformation, conv_gating = conv_transformation.cuda(), conv_gating.cuda()
                 prev_n_channel = self.hidden_channels[k]

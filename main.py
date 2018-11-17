@@ -1,4 +1,3 @@
-import torch
 import torch.optim as optim
 import torch.utils.data
 from tools import Parser, Trainer

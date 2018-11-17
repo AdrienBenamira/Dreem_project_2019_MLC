@@ -3,13 +3,14 @@ import numpy as np
 import h5py
 import csv
 import torch
+import pandas as pd
 from typing import List, Tuple
 
 __all__ = ['data_transformer', 'DreemDataset', 'DreemDatasets']
 
 
 def split_train_validation(len_dataset: int, percent_train: float,
-                           seed: float = None, length: int = None) -> Tuple[List[int], List[int]]:
+                           seed: float = None, length: int = None, index_labels:dict =None) -> Tuple[List[int], List[int]]:
     """
     Splits between train set and validation set
     Args:
@@ -21,12 +22,17 @@ def split_train_validation(len_dataset: int, percent_train: float,
     Returns: couple of indexes for train set and validation set
 
     """
+    split = int(percent_train * len_dataset)
     if seed is not None:
         np.random.seed(seed)
-    len_dataset = len_dataset if length is None or length > len_dataset else length
-    items = np.arange(0, len_dataset, dtype=np.int)
+    if index_labels is None:
+        len_dataset = len_dataset if length is None or length > len_dataset else length
+        items = np.arange(0, len_dataset, dtype=np.int)
+    else:
+        taille_min_sac = len(index_labels[1])
+        sample = [np.random.choice(index_labels[i], taille_min_sac) for i in range(5)]
+        items = np.array([i for j in sample for i in j])
     np.random.shuffle(items)
-    split = int(percent_train * len_dataset)
     return items[:split], items[split:]
 
 
@@ -36,7 +42,7 @@ class DreemDatasets:
     """
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
-                 split_train_val: float = 0.8, seed: float = None, size=None):
+                 split_train_val: float = 0.8, seed: float = None, equilibrate_data = True, size=None):
         """
         Args:
             data_path: path to data
@@ -57,21 +63,26 @@ class DreemDatasets:
             split_train_val: percentage of dataset to keep for the training set
             seed: Seed to use.
             size: Size of the dataset to keep
+            equilibrate_data: if true, limit dataset to 1400 samples
         """
         self.seed = seed
         self.data_path = data_path
         self.target_path = target_path
         self.keep_datasets = keep_datasets
         self.split_train_val = split_train_val
+        self.df = pd.read_csv(target_path)
+        self.index_labels = {i : self.df.index[self.df.sleep_stage==i].tolist() for i in range(5)}
+        self.equilibrate_data = equilibrate_data
         self.size = size
 
     def __enter__(self):
         # Start by initialising the first one to get the size of the dataset
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets).init()
         # Get the split
-        keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed, self.size)
-        self.train.set_keys_to_keep(keys_train)
-        # Initialize the second one
+        if self.equilibrate_data:
+            keys_train, keys_val = split_train_validation(len(self.index_labels[1]), self.split_train_val, self.seed, self.size, index_labels = self.index_labels)
+        else:
+            keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed, self.size)
         self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val).init()
         return self.train, self.val
 
