@@ -9,7 +9,7 @@ from typing import List, Tuple
 __all__ = ['data_transformer', 'DreemDataset', 'DreemDatasets']
 
 
-def split_train_validation(len_dataset: int, percent_train: float, seed: float = None) -> Tuple[List[int], List[int]]:
+def split_train_validation(len_dataset: int, percent_train: float, seed: float = None, index_labels:dict =None) -> Tuple[List[int], List[int]]:
     """
     Splits between train set and validation set
     Args:
@@ -20,11 +20,17 @@ def split_train_validation(len_dataset: int, percent_train: float, seed: float =
     Returns: couple of indexes for train set and validation set
 
     """
+    split = int(percent_train * len_dataset)
     if seed is not None:
         np.random.seed(seed)
-    items = np.arange(0, len_dataset, dtype=np.int)
-    np.random.shuffle(items)
-    split = int(percent_train * len_dataset)
+    if index_labels is None:
+        items = np.arange(0, len_dataset, dtype=np.int)
+        np.random.shuffle(items)
+    else:
+        taille_min_sac = len(index_labels[1])
+        sample = [np.random.choice(index_labels[i], taille_min_sac) for i in range(5)]
+        items = np.array([i for j in sample for i in j])
+        np.random.shuffle(items)
     return items[:split], items[split:]
 
 
@@ -70,7 +76,7 @@ class DreemDatasets:
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets).init()
         # Get the split
         if self.equilibrate_data:
-            keys_train, keys_val = split_train_validation(len(self.index_labels[0]), self.split_train_val, self.seed)
+            keys_train, keys_val = split_train_validation(len(self.index_labels[0]), self.split_train_val, self.seed, self.index_labels)
         else:
             keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed)
         self.train.set_keys_to_keep(keys_train)
