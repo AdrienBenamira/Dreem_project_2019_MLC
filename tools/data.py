@@ -3,6 +3,7 @@ import numpy as np
 import h5py
 import csv
 import torch
+import pandas as pd
 from typing import List, Tuple
 
 __all__ = ['data_transformer', 'DreemDataset', 'DreemDatasets']
@@ -33,7 +34,7 @@ class DreemDatasets:
     """
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
-                 split_train_val: float = 0.8, seed: float = None):
+                 split_train_val: float = 0.8, seed: float = None, equilibrate_data = True):
         """
         Args:
             data_path: path to data
@@ -53,18 +54,25 @@ class DreemDatasets:
                 * pulse_oximeter_infrared - Pulse oximeter infrared channel sampled at 10 Hz -> 300 values
             split_train_val: percentage of dataset to keep for the training set
             seed: Seed to use.
+            equilibrate_data: if true, limit dataset to 1400 samples
         """
         self.seed = seed
         self.data_path = data_path
         self.target_path = target_path
         self.keep_datasets = keep_datasets
         self.split_train_val = split_train_val
+        self.df = pd.read_csv(target_path)
+        self.index_labels = {i : self.df.index[self.df.sleep_stage==i].tolist() for i in range(5)}
+        self.equilibrate_data = equilibrate_data
 
     def __enter__(self):
         # Start by initialising the first one to get the size of the dataset
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets).init()
         # Get the split
-        keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed)
+        if self.equilibrate_data:
+            keys_train, keys_val = split_train_validation(len(self.index_labels[0]), self.split_train_val, self.seed)
+        else:
+            keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed)
         self.train.set_keys_to_keep(keys_train)
         # Initialize the second one
         self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val).init()
