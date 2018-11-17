@@ -13,7 +13,7 @@ use_cuda = torch.cuda.is_available()
 class Trainer:
     def __init__(self, train_loader, val_loader, optimizer, model_50hz, model_10hz, classifier,
                  log_every: int = 50, save_folder: str = None,
-                 transforms: Callable[[Tensor, Tensor], Tuple[Tensor, Tensor]] = None):
+                 transform: Callable[[Tensor, Tensor], Tuple[Tensor, Tensor]] = None):
         """
         Trainer class
         Args:
@@ -25,7 +25,7 @@ class Trainer:
             classifier:
             log_every: Print log every batch
             save_folder: folder to save the learned models
-            transforms: Transforms the data out of the model_50hz and model_10hz. Callable taking data_50hz and
+            transform: Transforms the data out of the model_50hz and model_10hz. Callable taking data_50hz and
                 data_10hz s input and returns the transformed data_50Hz and data_10Hz.
         """
         self.save_folder = save_folder
@@ -36,7 +36,7 @@ class Trainer:
         self.optimizer = optimizer
         self.val_loader = val_loader
         self.train_loader = train_loader
-        self.transforms = lambda x, y: (x, y) if transforms is None else transforms
+        self.transform = (lambda x, y: (x, y)) if transform is None else transform
 
     def step_train(self, epoch):
         self.model_50hz.train()
@@ -46,9 +46,9 @@ class Trainer:
             if use_cuda:
                 data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
             self.optimizer.zero_grad()
+            data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
             out_50hz = self.model_50hz(data_50hz)
             out_10hz = self.model_10hz(data_10hz)
-            out_50hz, out_10hz = self.transforms(out_50hz, out_10hz)
             out = self.classifier(torch.cat((out_50hz, out_10hz), dim=-1))
             criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
             loss = criterion(out, target)
@@ -70,9 +70,9 @@ class Trainer:
                 batch_size = target.size(0)
             if use_cuda:
                 data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
+            data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
             out_50hz = self.model_50hz(data_50hz)
             out_10hz = self.model_10hz(data_10hz)
-            out_50hz, out_10hz = self.transforms(out_50hz, out_10hz)
             out = self.classifier(torch.cat((out_50hz, out_10hz), dim=-1))
             criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
             validation_loss += criterion(out, target).data.item()
