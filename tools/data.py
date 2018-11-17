@@ -22,7 +22,6 @@ def split_train_validation(len_dataset: int, percent_train: float,
     Returns: couple of indexes for train set and validation set
 
     """
-    split = int(percent_train * len_dataset)
     if seed is not None:
         np.random.seed(seed)
     if index_labels is None:
@@ -33,6 +32,7 @@ def split_train_validation(len_dataset: int, percent_train: float,
         sample = [np.random.choice(index_labels[i], taille_min_sac) for i in range(5)]
         items = np.array([i for j in sample for i in j])
     np.random.shuffle(items)
+    split = int(percent_train * len(items))
     return items[:split], items[split:]
 
 
@@ -83,6 +83,7 @@ class DreemDatasets:
             keys_train, keys_val = split_train_validation(len(self.index_labels[1]), self.split_train_val, self.seed, self.size, index_labels = self.index_labels)
         else:
             keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed, self.size)
+        self.train.set_keys_to_keep(keys_train)
         self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val).init()
         return self.train, self.val
 
