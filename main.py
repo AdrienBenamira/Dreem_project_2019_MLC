@@ -46,12 +46,11 @@ with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv', keep_datasets=use_
         show_curves(data_50hz, data_10hz, target)
     plt.show()
 
-    # optimizer = optim.SGD([{'params': model_50hz.parameters()},
-    #                        {'params': model_10hz.parameters()},
-    #                        {'params': classifier.parameters()}],
-    #                       lr=args.lr,
-    #                       momentum=args.momentum)
-    # # print(len(train_loader.dataset))
-    # trainer = Trainer(train_loader, test_loader, optimizer, model_50hz, model_10hz, classifier,
-    #                   log_every=10, save_folder='builds')
-    # trainer.train(args.epochs)
+    optimizer = optim.SGD([{'params': model_50hz.parameters()},
+                           {'params': model_10hz.parameters()},
+                           {'params': classifier.parameters()}],
+                          lr=args.lr,
+                          momentum=args.momentum)
+    trainer = Trainer(train_loader, test_loader, optimizer, model_50hz, model_10hz, classifier,
+                      log_every=10, save_folder='builds')
+    trainer.train(args.epochs)
