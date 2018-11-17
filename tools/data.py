@@ -6,7 +6,7 @@ import torch
 import pandas as pd
 from typing import List, Tuple
 
-__all__ = ['data_transformer', 'DreemDataset', 'DreemDatasets']
+__all__ = ['DreemDataset', 'DreemDatasets']
 
 
 def split_train_validation(len_dataset: int, percent_train: float,
@@ -181,9 +181,9 @@ class DreemDataset:
         item = item if self.keys_to_keep is None else self.keys_to_keep[item]
         data_50hz = []
         data_10hz = []
-        for dataset in self.datasets.values():
+        for dataset_name, dataset in self.datasets.items():
             data_len = len(dataset[item])
-            data = dataset[item] if item not in self.transforms.keys() else self.transforms[item](dataset[item])
+            data = dataset[item] if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](dataset[item])
             if data_len == 1500:
                 data_50hz.append(data)
             else:

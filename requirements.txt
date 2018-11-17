@@ -1,2 +1,4 @@
+matplotlib
+scipy
 h5py
 torch
