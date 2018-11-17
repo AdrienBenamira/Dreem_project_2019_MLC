@@ -29,10 +29,10 @@ if use_cuda:
     classifier.cuda()
 
 transforms = {
-    # "eeg_1": extract_bands,
-    # "eeg_2": extract_bands,
-    # "eeg_3": extract_bands,
-    # "eeg_4": extract_bands
+    "eeg_1": extract_bands,
+    "eeg_2": extract_bands,
+    "eeg_3": extract_bands,
+    "eeg_4": extract_bands
 }
 
 # Use context manager to close the datasets when we're finished!
