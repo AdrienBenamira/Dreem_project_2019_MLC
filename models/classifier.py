@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -16,5 +17,6 @@ class MLPClassifier(nn.Module):
         self.fc2 = nn.Linear(hidden_features, out_features)
 
     def forward(self, x):
+        x = x.to(dtype=torch.float)
         x = F.relu(self.fc(x))
         return F.softmax(self.fc2(x), dim=-1)

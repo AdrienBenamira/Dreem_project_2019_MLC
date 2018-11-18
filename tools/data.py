@@ -43,7 +43,7 @@ class DreemDatasets:
     """
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
-                 split_train_val: float = 0.8, seed: float = None, equilibrate_data=True, size=None,
+                 split_train_val: float = 0.8, seed: float = None, balance_data=True, size=None,
                  transforms: dict = None, transforms_val: dict = None):
         """
         Args:
@@ -65,7 +65,7 @@ class DreemDatasets:
             split_train_val: percentage of dataset to keep for the training set
             seed: Seed to use.
             size: Size of the dataset to keep
-            equilibrate_data: if true, limit dataset to 1400 samples
+            balance_data: if true, limit dataset to 1400 samples
             transforms: Dict of transformations to apply to the element. The dict is indexed by the name of the dataset
                 and has a function as value that takes in a corresponding signal and has to return the transformed signal.
             transforms_val: Dict of transformations to apply to the element of val set. If None, uses the same as train set.
@@ -77,7 +77,7 @@ class DreemDatasets:
         self.split_train_val = split_train_val
         self.df = pd.read_csv(target_path)
         self.index_labels = {i: self.df.index[self.df.sleep_stage == i].tolist() for i in range(5)}
-        self.equilibrate_data = equilibrate_data
+        self.balance_data = balance_data
         self.size = size
         self.transforms = transforms if transforms is not None else {}
         self.transforms_val = transforms_val if transforms_val is not None else self.transforms
@@ -87,7 +87,7 @@ class DreemDatasets:
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets,
                                   transforms=self.transforms).init()
         # Get the split
-        if self.equilibrate_data:
+        if self.balance_data:
             keys_train, keys_val = split_train_validation(len(self.index_labels[1]), self.split_train_val, self.seed,
                                                           self.size, index_labels=self.index_labels)
         else:
@@ -183,7 +183,8 @@ class DreemDataset:
         data_10hz = []
         for dataset_name, dataset in self.datasets.items():
             data_len = len(dataset[item])
-            data = dataset[item] if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](dataset[item])
+            data = dataset[item] if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](
+                dataset[item])
             if data_len == 1500:
                 data_50hz.append(data)
             else:

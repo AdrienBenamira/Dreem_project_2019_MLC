@@ -10,7 +10,7 @@ __all__ = ['Trainer']
 use_cuda = torch.cuda.is_available()
 
 
-class Trainer:
+class GenericTrainer:
     def __init__(self, train_loader, val_loader, optimizer, model_50hz, model_10hz, classifier,
                  log_every: int = 50, save_folder: str = None,
                  transform: Callable[[Tensor, Tensor], Tuple[Tensor, Tensor]] = None):
@@ -47,11 +47,7 @@ class Trainer:
                 data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
             self.optimizer.zero_grad()
             data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
-            out_50hz = self.model_50hz(data_50hz)
-            out_10hz = self.model_10hz(data_10hz)
-            out = self.classifier(torch.cat((out_50hz, out_10hz), dim=-1))
-            criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
-            loss = criterion(out, target)
+            loss, _ = self.forward(data_50hz, data_10hz, target)
             loss.backward()
             self.optimizer.step()
             if batch_id % self.log_every == 0:
@@ -71,11 +67,8 @@ class Trainer:
             if use_cuda:
                 data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
             data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
-            out_50hz = self.model_50hz(data_50hz)
-            out_10hz = self.model_10hz(data_10hz)
-            out = self.classifier(torch.cat((out_50hz, out_10hz), dim=-1))
-            criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
-            validation_loss += criterion(out, target).data.item()
+            loss, out = self.forward(data_50hz, data_10hz, target)
+            validation_loss += loss.data.item()
             # get the index of the max log-probability
             pred = out.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum()
@@ -104,3 +97,17 @@ class Trainer:
                 model_file = path + '/classifier.pth'
                 torch.save(self.classifier.state_dict(), model_file)
             print('\nSaved models in ' + path + '.')
+
+    def forward(self, data_50hz, data_10hz, target):
+        raise NotImplementedError
+
+
+class Trainer(GenericTrainer):
+    def forward(self, data_50hz, data_10hz, target):
+        out_50hz = self.model_50hz(data_50hz)
+        out_10hz = self.model_10hz(data_10hz)
+        out = self.classifier(torch.cat((out_50hz, out_10hz), dim=-1))
+        criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
+        loss = criterion(out, target)
+        return loss, out
+
