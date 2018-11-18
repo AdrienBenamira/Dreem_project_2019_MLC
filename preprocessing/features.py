@@ -15,7 +15,7 @@ class ExtractFeatures:
                 - min
                 - max
                 - frequency
-                - power
+                - energy
         """
         self.window = window
         self.samplig_freq = sampling_freq
@@ -23,7 +23,7 @@ class ExtractFeatures:
             'min': lambda s: min(s),
             'max': lambda s: max(s),
             'frequency': self.get_frequency,
-            'power': self.get_power
+            'energy': self.get_energy
         }
         features = features if features is not None else available_features.keys()
         self.features = [available_features[feature] for feature in features]
@@ -62,7 +62,7 @@ class ExtractFeatures:
         mask_pos = freqs >= 0
         return 0 if len(abs(spectrum[mask_pos])) == 0 else abs(spectrum[mask_pos])[0]
 
-    def get_power(self, signal):
+    def get_energy(self, signal):
         return sum(np.power(signal, 2)) / self.samplig_freq
 
     def inflexion(self, signal):
