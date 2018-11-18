@@ -4,7 +4,7 @@ from tools import Parser, Trainer
 from tools.data import DreemDatasets
 from tools import show_curves
 from models import CNN, MLPClassifier
-from preprocessing import Compose, extract_bands, GenomicFeatures
+from preprocessing import Compose, extract_bands, ExtractFeatures
 import matplotlib.pyplot as plt
 
 # Training settings
@@ -36,10 +36,10 @@ if use_cuda:
     classifier.cuda()
 
 dataset_transforms = {
-    "eeg_1": Compose([extract_bands, GenomicFeatures()]),
-    "eeg_2": Compose([extract_bands, GenomicFeatures()]),
-    "eeg_3": Compose([extract_bands, GenomicFeatures()]),
-    "eeg_4": Compose([extract_bands, GenomicFeatures()])
+    "eeg_1": Compose([extract_bands, ExtractFeatures()]),
+    "eeg_2": Compose([extract_bands, ExtractFeatures()]),
+    "eeg_3": Compose([extract_bands, ExtractFeatures()]),
+    "eeg_4": Compose([extract_bands, ExtractFeatures()])
 }
 
 
