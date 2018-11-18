@@ -15,6 +15,7 @@ def split_train_validation(len_dataset: int, percent_train: float,
     """
     Splits between train set and validation set
     Args:
+        index_labels:
         len_dataset: size of the data set
         percent_train: splits according to this percentage.
         seed: Seed to use
@@ -191,6 +192,25 @@ class DreemDataset:
                 data_10hz.append(data)
         return (torch.tensor(data_50hz), torch.tensor(data_10hz),
                 self.targets[item]) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
+
+    def get(self, number=None):
+        """
+        Get several elements. Default all of them.
+        """
+        number = len(self) if number is None else number
+        data_50hz, data_10hz, targets = [], [], []
+        for item in range(number):
+            if self.targets is not None:
+                d50hz, d10hz, target = self[item]
+                data_50hz.append(d50hz)
+                data_10hz.append(d10hz)
+                targets.append(target)
+            else:
+                d50hz, d10hz = self[item]
+                data_50hz.append(d50hz)
+                data_10hz.append(d10hz)
+        return (torch.tensor(data_50hz), torch.tensor(data_10hz),
+                torch.tensor(targets)) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
 
     def __len__(self):
         return self.length

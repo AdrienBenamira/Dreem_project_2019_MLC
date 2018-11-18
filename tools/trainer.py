@@ -5,13 +5,13 @@ import os
 
 import torch
 
-__all__ = ['Trainer']
+__all__ = ['CNNTrainer', 'SimpleTrainer']
 
 use_cuda = torch.cuda.is_available()
 
 
 class GenericTrainer:
-    def __init__(self, train_loader, val_loader, optimizer, model_50hz, model_10hz, classifier,
+    def __init__(self, train_loader, val_loader, optimizer, model_50hz=None, model_10hz=None, classifier=None,
                  log_every: int = 50, save_folder: str = None,
                  transform: Callable[[Tensor, Tensor], Tuple[Tensor, Tensor]] = None):
         """
@@ -39,8 +39,12 @@ class GenericTrainer:
         self.transform = (lambda x, y: (x, y)) if transform is None else transform
 
     def step_train(self, epoch):
-        self.model_50hz.train()
-        self.model_10hz.train()
+        if self.model_50hz is not None:
+            self.model_50hz.train()
+        if self.model_10hz is not None:
+            self.model_10hz.train()
+        if self.classifier is not None:
+            self.classifier.train()
 
         for batch_id, (data_50hz, data_10hz, target) in enumerate(self.train_loader):
             if use_cuda:
@@ -56,8 +60,13 @@ class GenericTrainer:
                            100. * batch_id * target.size(0) / len(self.train_loader.dataset), loss.data.item()))
 
     def step_val(self, epoch):
-        self.model_50hz.eval()
-        self.model_10hz.eval()
+        if self.model_50hz is not None:
+            self.model_50hz.eval()
+        if self.model_10hz is not None:
+            self.model_10hz.eval()
+        if self.classifier is not None:
+            self.classifier.eval()
+
         validation_loss = 0
         correct = 0
         batch_size = None
@@ -102,7 +111,7 @@ class GenericTrainer:
         raise NotImplementedError
 
 
-class Trainer(GenericTrainer):
+class CNNTrainer(GenericTrainer):
     def forward(self, data_50hz, data_10hz, target):
         out_50hz = self.model_50hz(data_50hz)
         out_10hz = self.model_10hz(data_10hz)
@@ -111,3 +120,10 @@ class Trainer(GenericTrainer):
         loss = criterion(out, target)
         return loss, out
 
+
+class SimpleTrainer(GenericTrainer):
+    def forward(self, data_50hz, data_10hz, target):
+        out = self.classifier(torch.cat((data_50hz, data_10hz), dim=-1))
+        criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
+        loss = criterion(out, target)
+        return loss, out

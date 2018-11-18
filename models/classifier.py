@@ -18,5 +18,5 @@ class MLPClassifier(nn.Module):
 
     def forward(self, x):
         x = x.to(dtype=torch.float)
-        x = F.relu(self.fc(x))
+        x = F.dropout(F.relu(self.fc(x)), p=0.5)
         return F.softmax(self.fc2(x), dim=-1)
