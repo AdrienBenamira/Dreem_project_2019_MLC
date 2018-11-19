@@ -42,9 +42,11 @@ def extract_all_features(train_samples):
 X_300, X_1500, Y = extract_all_features(train_samples)
 X_300_val, X_1500_val, Y_val = extract_all_features(val_samples)
 
-np.save("../dataset/X_features_train_equilibrate_300", X_300)
-np.save("../dataset/X_features_train_equilibrate_1500", X_1500)
-np.save("../dataset/Y_labels_train_equilibrate", Y)
-np.save("../dataset/X_features_val_equilibrate_300", X_300_val)
-np.save("../dataset/X_features_val_equilibrate_1500", X_1500_val)
-np.save("../dataset/Y_labels_val_equilibrate", Y_val)
+np.save("../dataset/X_features_train_equilibrate_300.npy", X_300)
+np.save("../dataset/X_features_train_equilibrate_1500.npy", X_1500)
+np.save("../dataset/Y_labels_train_equilibrate.npy", Y)
+np.save("../dataset/X_features_val_equilibrate_300.npy", X_300_val)
+np.save("../dataset/X_features_val_equilibrate_1500.npy", X_1500_val)
+np.save("../dataset/Y_labels_val_equilibrate.npy", Y_val)
+
+train_file.close()
