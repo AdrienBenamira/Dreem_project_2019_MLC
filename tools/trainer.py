@@ -1,6 +1,7 @@
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Union
 from torch import Tensor
 from datetime import datetime
+from tqdm import tqdm
 import os
 
 import torch
@@ -13,7 +14,7 @@ use_cuda = torch.cuda.is_available()
 class GenericTrainer:
     def __init__(self, train_loader, val_loader, optimizer, model_50hz=None, model_10hz=None, classifier=None,
                  log_every: int = 50, save_folder: str = None,
-                 transform: Callable[[Tensor, Tensor], Tuple[Tensor, Tensor]] = None):
+                 transform: Callable[[Tensor, Tensor], Tuple[Tensor, Union[Tensor, None]]] = None):
         """
         Trainer class
         Args:
@@ -46,18 +47,19 @@ class GenericTrainer:
         if self.classifier is not None:
             self.classifier.train()
 
-        for batch_id, (data_50hz, data_10hz, target) in enumerate(self.train_loader):
-            if use_cuda:
-                data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
-            self.optimizer.zero_grad()
-            data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
-            loss, _ = self.forward(data_50hz, data_10hz, target)
-            loss.backward()
-            self.optimizer.step()
-            if batch_id % self.log_every == 0:
-                print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                    epoch, batch_id * len(data_50hz), len(self.train_loader.dataset),
-                           100. * batch_id * target.size(0) / len(self.train_loader.dataset), loss.data.item()))
+        with tqdm(total=len(self.train_loader.dataset) / self.train_loader.dataset[0][0].size(0)) as t:
+            for batch_id, (data_50hz, data_10hz, target) in enumerate(self.train_loader):
+                if use_cuda:
+                    data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
+                self.optimizer.zero_grad()
+                data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
+                loss, _ = self.forward(data_50hz, data_10hz, target)
+                loss.backward()
+                self.optimizer.step()
+                if batch_id % self.log_every == 0:
+                    t.set_description("Train - Epoch " + str(epoch))
+                    t.set_postfix_str("Loss: " + str(loss.data.item()))
+                t.update()
 
     def step_val(self, epoch):
         if self.model_50hz is not None:
@@ -70,22 +72,27 @@ class GenericTrainer:
         validation_loss = 0
         correct = 0
         batch_size = None
-        for batch_id, (data_50hz, data_10hz, target) in enumerate(self.val_loader):
-            if batch_size is None:
-                batch_size = target.size(0)
-            if use_cuda:
-                data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
-            data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
-            loss, out = self.forward(data_50hz, data_10hz, target)
-            validation_loss += loss.data.item()
-            # get the index of the max log-probability
-            pred = out.data.max(1, keepdim=True)[1]
-            correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+        with tqdm(total=len(self.val_loader.dataset) / self.val_loader.dataset[0][0].size(0)) as t:
+            for batch_id, (data_50hz, data_10hz, target) in enumerate(self.val_loader):
+                if batch_size is None:
+                    batch_size = target.size(0)
+                if use_cuda:
+                    data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
+                data_50hz, data_10hz = self.transform(data_50hz, data_10hz)
+                loss, out = self.forward(data_50hz, data_10hz, target)
+                validation_loss += loss.data.item()
+                # get the index of the max log-probability
+                pred = out.data.max(1, keepdim=True)[1]
+                correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+                if batch_id % self.log_every == 0:
+                    t.set_description("Val - Epoch " + str(epoch))
+                    t.set_postfix_str("Loss: " + str(loss.data.item()))
+                t.update()
 
-        validation_loss /= len(self.val_loader.dataset) / batch_size
-        print('\nValidation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-            validation_loss, correct, len(self.val_loader.dataset),
-            100. * correct / len(self.val_loader.dataset)))
+            validation_loss /= len(self.val_loader.dataset) / batch_size
+            print('\nValidation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+                validation_loss, correct, len(self.val_loader.dataset),
+                100. * correct / len(self.val_loader.dataset)))
 
     def train(self, n_epochs: int):
         """
@@ -123,7 +130,8 @@ class CNNTrainer(GenericTrainer):
 
 class SimpleTrainer(GenericTrainer):
     def forward(self, data_50hz, data_10hz, target):
-        out = self.classifier(torch.cat((data_50hz, data_10hz), dim=-1))
+        in_classifier = torch.cat((data_50hz, data_10hz), dim=-1) if data_10hz is not None else data_50hz
+        out = self.classifier(in_classifier)
         criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
         loss = criterion(out, target)
         return loss, out

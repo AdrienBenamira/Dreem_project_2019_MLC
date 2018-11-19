@@ -6,13 +6,33 @@ import torch.nn.functional as F
 
 from tools.cnn import output_size_seq_conv_layer
 
-__all__ = ['CNN']
+__all__ = ['CNN', 'SimpleCNN']
 
 use_cuda = torch.cuda.is_available()
 
 
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+        self.conv1 = nn.Conv2d(12, 15, kernel_size=3)
+        self.conv2 = nn.Conv2d(15, 20, kernel_size=3)
+        self.conv3 = nn.Conv2d(20, 20, kernel_size=3)
+        self.fc1 = nn.Linear(160, 50)
+        self.fc2 = nn.Linear(50, 5)
+
+    def forward(self, x):
+        x = x.to(dtype=torch.float)
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2(x), 2))
+        x = F.relu(F.max_pool2d(self.conv3(x), 2))
+        x = x.view(x.size(0), -1)
+        x = F.relu(self.fc1(x))
+        return torch.softmax(self.fc2(x), dim=1)
+
+
 class CNN(nn.Module):
-    def __init__(self, in_features: int, out_features: int, in_channels: int, number_groups: int = 4, hidden_channels: List[int] = None,
+    def __init__(self, in_features: int, out_features: int, in_channels: int, number_groups: int = 4,
+                 hidden_channels: List[int] = None,
                  kernel_sizes: List[int] = None, size_groups: int = 1):
         """
         Apply convolutions to a signal. Inspired from the Wavenet architecture

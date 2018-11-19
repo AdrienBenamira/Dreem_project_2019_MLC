@@ -20,7 +20,7 @@ class ExtractFeatures:
                 - esis: EnergySis
         """
         self.window = window
-        self.samplig_freq = sampling_freq
+        self.sampling_freq = sampling_freq
         available_features = {
             'min': lambda s: min(s),
             'max': lambda s: max(s),
@@ -48,9 +48,13 @@ class ExtractFeatures:
         features = [feature(signal) for feature in self.features]
         return np.array(features)
 
-    def get_frequency(self, signal):
-        spectrum = np.fft.fft(signal) / self.samplig_freq
+    def get_spectrum(self, signal):
+        spectrum = np.fft.fft(signal) / self.sampling_freq
         freqs = np.fft.fftfreq(signal.shape[0])
+        return spectrum, freqs
+
+    def get_frequency(self, signal):
+        spectrum, freqs = self.get_spectrum(signal)
         threshold = 0.99 * max(abs(spectrum))
         mask = abs(spectrum) >= threshold
         # spectrum = spectrum[mask]
@@ -59,7 +63,7 @@ class ExtractFeatures:
         return 0 if len(abs(freqs[mask_pos])) == 0 else abs(freqs[mask_pos])[0]
 
     def get_energy(self, signal):
-        return sum(np.power(signal, 2)) / self.samplig_freq
+        return sum(np.power(signal, 2)) / self.sampling_freq
 
     def get_mmd(self, signal):
         """
@@ -83,7 +87,7 @@ class ExtractFeatures:
         return self.get_energy(signal) * self.get_frequency(signal) * self.window
 
     def get_inflexion(self, signal):
-        h = 1 / self.samplig_freq
+        h = 1 / self.sampling_freq
         num_inflexion = 0
         for k in range(1, len(signal) - 1):
             d = (signal[k - 1] + signal[k + 1] - 2 * signal[k]) / (2 * h)
