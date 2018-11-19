@@ -3,7 +3,7 @@ config/
 dataset/
 !dataset/readme.md
 builds/
-
+documentation/
 .idea/
 
 *.pyc
