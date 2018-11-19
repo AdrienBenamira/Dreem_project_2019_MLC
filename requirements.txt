@@ -1,3 +1,6 @@
+numpy
+matplotlib
+scipy
 h5py
 torch
 pandas
