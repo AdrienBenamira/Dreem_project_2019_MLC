@@ -15,38 +15,50 @@ train_samples = all_samples[:int(0.8*len(all_samples))]
 val_samples = all_samples[int(0.8*len(all_samples)):]
 
 
-def extract_features(num,  X_300, X_1500, Y, index_position):
-    items = list(train_file.keys())
-    compteur_300=0
-    compteur_1500=0
-    for index_item, item in enumerate(items):
-        if len(train_file[item][index_position])==300:
-            X_300[num][compteur_300] = train_file[item][index_position]
-            compteur_300+=1
-        else:
-            X_1500[num][compteur_1500] = train_file[item][index_position]
-            compteur_1500+=1
-    Y[num]=df.sleep_stage[num]
-    return(X_300,X_1500,Y)
-
-def extract_all_features(train_samples):
-    X_300 = np.zeros((len(train_samples), 4, 300))
-    X_1500 = np.zeros((len(train_samples), len(list(train_file.keys()))-4, 1500))
+def extract_features(train_samples):
+    X_300 = np.zeros((4, len(train_samples), 300))
+    X_1500 = np.zeros((len(list(train_file.keys())) - 4, len(train_samples), 1500))
     Y = np.zeros(len(train_samples))
+    items = list(train_file.keys())
+    compteur_300 = 0
+    compteur_1500 = 0
+    for index_item, item in enumerate(items):
+        train_fi = train_file[item][:]
+        print(train_fi.shape)
+        if train_fi.shape[1] == 300:
+            X_300[compteur_300] = np.take(train_fi, train_samples, axis=0)
+            compteur_300 += 1
+        else:
+            X_1500[compteur_1500] = np.take(train_fi, train_samples, axis=0)
+            compteur_1500 += 1
     for index_sample, val_sample in enumerate(train_samples):
-        if index_sample%1000 == 0:
-            print(index_sample)
-        X_300, X_1500, Y = extract_features(index_sample,  X_300, X_1500, Y, val_sample)
+        Y[index_sample] = df.sleep_stage[val_sample]
     return(X_300, X_1500, Y)
 
-X_300, X_1500, Y = extract_all_features(train_samples)
-X_300_val, X_1500_val, Y_val = extract_all_features(val_samples)
+X_300, X_1500, Y = extract_features(train_samples)
+X_300_val, X_1500_val, Y_val = extract_features(val_samples)
 
-np.save("../dataset/X_features_train_equilibrate_300.npy", X_300)
-np.save("../dataset/X_features_train_equilibrate_1500.npy", X_1500)
+X_300.shape
+X_300s = X_300.reshape(5412,4,300)
+print(X_300.shape)
+
+print(X_1500.shape)
+X_1500s = X_1500.reshape(5412,7,1500)
+print(X_1500.shape)
+
+print(X_300_val.shape)
+X_300_vals = X_300_val.reshape(1353,4,300)
+print(X_300_val.shape)
+
+X_1500_val.shape
+X_1500_vals = X_1500_val.reshape(1353,7,1500)
+print(X_1500_val.shape)
+
+np.save("../dataset/X_features_train_equilibrate_300.npy", X_300s)
+np.save("../dataset/X_features_train_equilibrate_1500.npy", X_1500s)
 np.save("../dataset/Y_labels_train_equilibrate.npy", Y)
-np.save("../dataset/X_features_val_equilibrate_300.npy", X_300_val)
-np.save("../dataset/X_features_val_equilibrate_1500.npy", X_1500_val)
+np.save("../dataset/X_features_val_equilibrate_300.npy", X_300_vals)
+np.save("../dataset/X_features_val_equilibrate_1500.npy", X_1500_vals)
 np.save("../dataset/Y_labels_val_equilibrate.npy", Y_val)
 
 train_file.close()
