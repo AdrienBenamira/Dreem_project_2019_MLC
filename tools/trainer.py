@@ -106,12 +106,21 @@ class GenericTrainer:
             self.step_train(epoch)
             self.step_val(epoch)
             if self.save_folder is not None:
-                model_file = path + '/model_50hz.pth'
-                torch.save(self.model_50hz.state_dict(), model_file)
-                model_file = path + '/model_10hz.pth'
-                torch.save(self.model_10hz.state_dict(), model_file)
-                model_file = path + '/classifier.pth'
-                torch.save(self.classifier.state_dict(), model_file)
+                try:
+                    model_file = path + '/model_50hz.pth'
+                    torch.save(self.model_50hz.state_dict(), model_file)
+                except Exception as e:
+                    print(e)
+                try:
+                    model_file = path + '/model_10hz.pth'
+                    torch.save(self.model_10hz.state_dict(), model_file)
+                except Exception as e:
+                    print(e)
+                try:
+                    model_file = path + '/classifier.pth'
+                    torch.save(self.classifier.state_dict(), model_file)
+                except Exception as e:
+                    print(e)
             print('\nSaved models in ' + path + '.')
 
     def forward(self, data_50hz, data_10hz, target):
