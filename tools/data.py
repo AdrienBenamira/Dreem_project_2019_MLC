@@ -83,7 +83,7 @@ class DreemDatasets:
         self.transforms = transforms if transforms is not None else {}
         self.transforms_val = transforms_val if transforms_val is not None else self.transforms
 
-    def __enter__(self):
+    def get(self):
         # Start by initialising the first one to get the size of the dataset
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets,
                                   transforms=self.transforms).init()
@@ -98,9 +98,15 @@ class DreemDatasets:
                                 transforms=self.transforms_val).init()
         return self.train, self.val
 
-    def __exit__(self, *args):
+    def __enter__(self):
+        return self.get()
+
+    def close(self):
         self.train.close()
         self.val.close()
+
+    def __exit__(self, *args):
+        self.close()
 
 
 class DreemDataset:
@@ -158,7 +164,7 @@ class DreemDataset:
                     self.length = self.data[item].shape[0]
                 self.h5_datasets[item] = self.data[item]
 
-    def _load_data(self):
+    def load_data(self):
         self.datasets = {}
         for dataset_name, dataset in self.h5_datasets.items():
             self.datasets[dataset_name] = dataset[:]
@@ -190,7 +196,7 @@ class DreemDataset:
         data_10hz = []
         if self.datasets is None:
             print("Loading data in memory...")
-            self._load_data()
+            self.load_data()
             print("Done.")
         for dataset_name, dataset in self.datasets.items():
             data_len = len(dataset[item])

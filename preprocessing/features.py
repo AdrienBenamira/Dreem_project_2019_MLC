@@ -53,7 +53,7 @@ class ExtractFeatures:
             for band in range(signal.shape[0]):
                 features.append(self.get_features(signal[band], band))
             features = np.array(features)
-            features = features.reshape((features.shape[0] * features.shape[1]))
+            # features = features.reshape((features.shape[0] * features.shape[1]))
         return features
 
     def get_features(self, signal, band):
