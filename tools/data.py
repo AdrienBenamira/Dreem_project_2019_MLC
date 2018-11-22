@@ -106,7 +106,8 @@ class DreemDatasets:
 class DreemDataset:
     targets = None
     length = None
-    datasets = {}
+    h5_datasets = {}
+    datasets = None
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
                  keys_to_keep: List[int] = None, transforms: dict = None):
@@ -138,7 +139,7 @@ class DreemDataset:
         self.transforms = transforms if transforms is not None else {}
 
     def init(self):
-        self._load_data(self.data_path)
+        self._open_datasets(self.data_path)
         if self.target_path is not None:
             self._load_target(self.target_path)
         self.length = self.length if self.keys_to_keep is None else len(self.keys_to_keep)
@@ -148,14 +149,19 @@ class DreemDataset:
         self.keys_to_keep = keys_to_keep
         self.length = self.length if keys_to_keep is None else len(keys_to_keep)
 
-    def _load_data(self, data_path):
+    def _open_datasets(self, data_path):
         path = os.path.abspath(os.path.join(os.curdir, data_path))
         self.data = h5py.File(path, 'r')
         for item in self.data:
             if self.keep_datasets is not None and item in self.keep_datasets:
                 if self.length is None:
                     self.length = self.data[item].shape[0]
-                self.datasets[item] = self.data[item]
+                self.h5_datasets[item] = self.data[item]
+
+    def _load_data(self):
+        self.datasets = {}
+        for dataset_name, dataset in self.h5_datasets.items():
+            self.datasets[dataset_name] = dataset[:]
 
     def _load_target(self, target_path):
         path = os.path.abspath(os.path.join(os.curdir, target_path))
@@ -182,6 +188,10 @@ class DreemDataset:
         item = item if self.keys_to_keep is None else self.keys_to_keep[item]
         data_50hz = []
         data_10hz = []
+        if self.datasets is None:
+            print("Loading data in memory...")
+            self._load_data()
+            print("Done.")
         for dataset_name, dataset in self.datasets.items():
             data_len = len(dataset[item])
             data = dataset[item] if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](
@@ -191,26 +201,7 @@ class DreemDataset:
             else:
                 data_10hz.append(data)
         return (torch.tensor(data_50hz), torch.tensor(data_10hz),
-                self.targets[item]) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
-
-    def get(self, number=None):
-        """
-        Get several elements. Default all of them.
-        """
-        number = len(self) if number is None else number
-        data_50hz, data_10hz, targets = [], [], []
-        for item in range(number):
-            if self.targets is not None:
-                d50hz, d10hz, target = self[item]
-                data_50hz.append(d50hz)
-                data_10hz.append(d10hz)
-                targets.append(target)
-            else:
-                d50hz, d10hz = self[item]
-                data_50hz.append(d50hz)
-                data_10hz.append(d10hz)
-        return (torch.tensor(data_50hz), torch.tensor(data_10hz),
-                torch.tensor(targets)) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
+                torch.tensor(self.targets[item])) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
 
     def __len__(self):
         return self.length
