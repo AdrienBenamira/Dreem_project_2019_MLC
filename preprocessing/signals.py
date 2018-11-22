@@ -20,18 +20,21 @@ class ExtractBands:
         self.bands = self.extractors.keys() if (bands is None or bands == '*') else bands
         self.frequencies = [(self.extractors[band].freq_min, self.extractors[band].freq_max) for band in self.bands]
 
-    def __call__(self, signal):
+    def __call__(self, batch_signal):
         """
         Extract the different wave bands from the signal
         Args:
-            signal: eeg signal
+            signal: eeg signal. Shape of number_of_signals x signal_length
 
         Returns:
             List of all bands from the signal
         """
         signals = []
-        for band in self.bands:
-            signals.append(self.extractors[band](signal))
+        for signal in batch_signal:
+            s = []
+            for band in self.bands:
+                s.append(self.extractors[band](signal))
+            signals.append(s)
         return np.array(signals)
 
 
@@ -43,24 +46,25 @@ class ExtractSpectrum:
     def __call__(self, signal):
         """
         Args:
-            signal: signal. Either one signal of dimension 1500 (sampled at 50hz) or all bands for one signal
-                of dimension (number_bands x 1500)
+            signal: signal. Either one batch of signals of dimension 1500 (sampled at 50hz) or all bands for one batch
+             signals of dimension (batch_size x number_bands x 1500)
         """
-        if len(signal.shape) == 1:
+        if len(signal.shape) == 2:
             return self.get_spectrum(signal)
-        elif len(signal.shape) == 2:  # decomposed in bands
+        elif len(signal.shape) == 3:  # decomposed in bands
             features = []
-            for band in range(signal.shape[0]):
-                features.append(self.get_spectrum(signal[band]))
+            for band in range(signal.shape[1]):
+                features.append(self.get_spectrum(signal[:, band]))
             return np.array(features)
 
     def get_spectrum(self, signal):
         range_signal = range(0, len(signal), self.window)
-        d = np.zeros((len(list(range_signal)), self.window))
-        for i, k in enumerate(range_signal):
-            sub_signal = signal[k:k + self.window]
-            spectrum = abs(np.fft.fft(sub_signal) / self.sampling_freq)
-            d[i, :] = spectrum
+        d = np.zeros((signal.shape[0], len(list(range_signal)), self.window))
+        for b in range(signal.shape[0]):  # for each signal in batch
+            for i, k in enumerate(range_signal):
+                sub_signal = signal[b, k:k + self.window]
+                spectrum = abs(np.fft.fft(sub_signal) / self.sampling_freq)
+                d[b, i, :] = spectrum
         return d
 
 

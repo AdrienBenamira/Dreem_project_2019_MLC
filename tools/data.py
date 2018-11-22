@@ -191,6 +191,7 @@ class DreemDataset:
         self.close()
 
     def __getitem__(self, item):
+        is_slice = type(item) == slice
         item = item if self.keys_to_keep is None else self.keys_to_keep[item]
         data_50hz = []
         data_10hz = []
@@ -199,15 +200,19 @@ class DreemDataset:
             self.load_data()
             print("Done.")
         for dataset_name, dataset in self.datasets.items():
-            data_len = len(dataset[item])
-            data = dataset[item] if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](
-                dataset[item])
+            data_len = len(dataset[item]) if not is_slice else len(dataset[item][0])
+            data = dataset[item] if is_slice else np.expand_dims(dataset[item], 0)
+            data = data if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](data)
+            data = data if is_slice else data[0]
             if data_len == 1500:
                 data_50hz.append(data)
             else:
                 data_10hz.append(data)
+        data_50hz = np.array(data_50hz)
+        data_10hz = np.array(data_10hz)
+        targets = np.array([self.targets[i] for i in item])
         return (torch.tensor(data_50hz), torch.tensor(data_10hz),
-                torch.tensor(self.targets[item])) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
+                torch.tensor(targets)) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
 
     def __len__(self):
         return self.length

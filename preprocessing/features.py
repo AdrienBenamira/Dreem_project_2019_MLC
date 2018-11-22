@@ -40,24 +40,24 @@ class ExtractFeatures:
     def __call__(self, signal):
         """
         Args:
-            signal: signal. Either one signal of dimension 1500 (sampled at 50hz) or all bands for one signal
-                of dimension (number_bands x 1500)
+            signal: signal. Either one batch of signals of dimension 1500 (sampled at 50hz) or all bands for one batch of
+             signals of dimension (batch_size x number_bands x 1500)
         """
         if self.extract_bands is not None:
             signal = self.extract_bands(signal)
         features = None
-        if len(signal.shape) == 1:
+        if len(signal.shape) == 2:
             features = self.get_features(signal, None)
-        elif len(signal.shape) == 2:  # decomposed in bands
+        elif len(signal.shape) == 3:  # decomposed in bands
             features = []
-            for band in range(signal.shape[0]):
-                features.append(self.get_features(signal[band], band))
+            for band in range(signal.shape[1]):
+                features.append(self.get_features(signal[:, band], band))
             features = np.array(features)
             # features = features.reshape((features.shape[0] * features.shape[1]))
         return features
 
     def get_features(self, signal, band):
-        features = [feature(signal, band) for feature in self.features]
+        features = [[feature(signal[k], band) for feature in self.features] for k in range(signal.shape[0])]
         return np.array(features)
 
     def get_spectrum(self, signal):
