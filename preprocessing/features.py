@@ -1,6 +1,5 @@
 import numpy as np
 from typing import Union, List
-import matplotlib.pyplot as plt
 from preprocessing import ExtractBands
 
 __all__ = ["ExtractFeatures"]
@@ -63,7 +62,7 @@ class ExtractFeatures:
     def get_spectrum(self, signal):
         spectrum = np.fft.fft(signal) / self.sampling_freq
         freqs = np.fft.fftfreq(signal.shape[0])
-        return spectrum, freqs
+        return spectrum, freqs * self.sampling_freq
 
     def get_frequency(self, signal, _):
         spectrum, freqs = self.get_spectrum(signal)
@@ -75,7 +74,7 @@ class ExtractFeatures:
         return 0 if len(abs(freqs[mask_pos])) == 0 else abs(freqs[mask_pos])[0]
 
     def get_energy(self, signal, _):
-        return sum(np.power(signal, 2)) / self.sampling_freq
+        return sum(np.power(signal, 2)) / len(signal)
 
     def get_mmd(self, signal, _):
         """
@@ -88,7 +87,7 @@ class ExtractFeatures:
             sub_signal = signal[k:k + self.window]
             arg_min = np.argmin(sub_signal)
             arg_max = np.argmax(sub_signal)
-            d[i] = np.sqrt((max(sub_signal) - min(sub_signal)) ** 2 + (arg_max - arg_min) ** 2)
+            d[i] = np.sqrt((max(sub_signal) - min(sub_signal)) ** 2 + ((arg_max - arg_min) / self.sampling_freq) ** 2)
         return d.sum()
 
     def get_esis(self, signal, band):

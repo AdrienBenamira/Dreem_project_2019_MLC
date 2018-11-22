@@ -210,7 +210,7 @@ class DreemDataset:
                 data_10hz.append(data)
         data_50hz = np.array(data_50hz)
         data_10hz = np.array(data_10hz)
-        targets = np.array([self.targets[i] for i in item])
+        targets = np.array([self.targets[i] for i in item]) if is_slice else self.targets[item]
         return (torch.tensor(data_50hz), torch.tensor(data_10hz),
                 torch.tensor(targets)) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
 
