@@ -1,14 +1,17 @@
 import numpy as np
+from typing import Union, List
 import matplotlib.pyplot as plt
+from preprocessing import ExtractBands
 
 __all__ = ["ExtractFeatures"]
 
 
 class ExtractFeatures:
-    def __init__(self, features=None, window=100, sampling_freq=50):
+    def __init__(self, features=None, bands: Union[str, List[str]] = None, window=100, sampling_freq=50):
         """
 
         Args:
+            bands: bands to use if precised. Otherwise, does not separate in bands
             window: size of the sliding window
             sampling_freq:
             features: list of features to use. If None, all of them. Available features:
@@ -22,8 +25,8 @@ class ExtractFeatures:
         self.window = window
         self.sampling_freq = sampling_freq
         available_features = {
-            'min': lambda s: min(s),
-            'max': lambda s: max(s),
+            'min': lambda s, _: min(s),
+            'max': lambda s, _: max(s),
             'frequency': self.get_frequency,
             'energy': self.get_energy,
             'mmd': self.get_mmd,
@@ -31,21 +34,30 @@ class ExtractFeatures:
         }
         features = features if features is not None else available_features.keys()
         self.features = [available_features[feature] for feature in features]
+        self.bands = bands
+        self.extract_bands = ExtractBands(self.bands) if self.bands is not None else None
 
     def __call__(self, signal):
+        """
+        Args:
+            signal: signal. Either one signal of dimension 1500 (sampled at 50hz) or all bands for one signal
+                of dimension (number_bands x 1500)
+        """
+        if self.extract_bands is not None:
+            signal = self.extract_bands(signal)
         features = None
         if len(signal.shape) == 1:
-            features = self.get_features(signal)
+            features = self.get_features(signal, None)
         elif len(signal.shape) == 2:  # decomposed in bands
             features = []
             for band in range(signal.shape[0]):
-                features.append(self.get_features(signal[band]))
+                features.append(self.get_features(signal[band], band))
             features = np.array(features)
             features = features.reshape((features.shape[0] * features.shape[1]))
         return features
 
-    def get_features(self, signal):
-        features = [feature(signal) for feature in self.features]
+    def get_features(self, signal, band):
+        features = [feature(signal, band) for feature in self.features]
         return np.array(features)
 
     def get_spectrum(self, signal):
@@ -53,7 +65,7 @@ class ExtractFeatures:
         freqs = np.fft.fftfreq(signal.shape[0])
         return spectrum, freqs
 
-    def get_frequency(self, signal):
+    def get_frequency(self, signal, _):
         spectrum, freqs = self.get_spectrum(signal)
         threshold = 0.99 * max(abs(spectrum))
         mask = abs(spectrum) >= threshold
@@ -62,10 +74,10 @@ class ExtractFeatures:
         mask_pos = freqs >= 0
         return 0 if len(abs(freqs[mask_pos])) == 0 else abs(freqs[mask_pos])[0]
 
-    def get_energy(self, signal):
+    def get_energy(self, signal, _):
         return sum(np.power(signal, 2)) / self.sampling_freq
 
-    def get_mmd(self, signal):
+    def get_mmd(self, signal, _):
         """
         Feature from "Sleep Stage Classification Using EEG Signal Analysis:
             A Comprehensive Survey and New Investigation", Aboalayon et al.
@@ -79,14 +91,17 @@ class ExtractFeatures:
             d[i] = np.sqrt((max(sub_signal) - min(sub_signal)) ** 2 + (arg_max - arg_min) ** 2)
         return d.sum()
 
-    def get_esis(self, signal):
+    def get_esis(self, signal, band):
         """
         Feature from "Sleep Stage Classification Using EEG Signal Analysis:
             A Comprehensive Survey and New Investigation", Aboalayon et al.
         """
-        return self.get_energy(signal) * self.get_frequency(signal) * self.window
+        assert band is not None, "Need to decompose in bands for esis feature"
+        freq_min, freq_max = self.extract_bands.frequencies[band]
+        freq = (freq_min + freq_max) / 2
+        return self.get_energy(signal, band) * freq * self.window
 
-    def get_inflexion(self, signal):
+    def get_inflexion(self, signal, _):
         h = 1 / self.sampling_freq
         num_inflexion = 0
         for k in range(1, len(signal) - 1):

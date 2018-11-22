@@ -4,14 +4,14 @@ from tools import Parser, SimpleTrainer as Trainer
 from tools.data import DreemDatasets
 from tools import show_curves
 from models import CNN, MLPClassifier, SimpleCNN
-from preprocessing import Compose, extract_bands, ExtractFeatures, ExtractSpectrum
+from preprocessing import Compose, ExtractBands, ExtractFeatures, ExtractSpectrum
 import matplotlib.pyplot as plt
 
 # Training settings
 args = Parser().parse()
 use_cuda = torch.cuda.is_available()
 
-use_datasets = ['eeg_1', 'eeg_3', 'eeg_4', 'accelerometer_x']
+use_datasets = ['eeg_5', 'accelerometer_x']
 
 # Fist test, only 2 networks, 1 for eeg, 1 for accelerometers and pulse
 number_groups = 4
@@ -37,10 +37,11 @@ if use_cuda:
     # classifier.cuda()
 
 dataset_transforms = {
-    "eeg_1": Compose([extract_bands, ExtractSpectrum(window=50)]),
-    "eeg_2": Compose([extract_bands, ExtractSpectrum(window=50)]),
-    "eeg_3": Compose([extract_bands, ExtractSpectrum(window=50)]),
-    "eeg_4": Compose([extract_bands, ExtractSpectrum(window=50)]),
+    "eeg_1": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
+    "eeg_2": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
+    "eeg_3": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
+    "eeg_4": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
+    "eeg_5": ExtractFeatures(['esis'], bands='*'),
     "accelerometer_x": ExtractFeatures(['energy']),
     "accelerometer_y": ExtractFeatures(['energy']),
     "accelerometer_z": ExtractFeatures(['energy']),
@@ -63,6 +64,8 @@ with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv',
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
     test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, num_workers=1)
 
+    # print(train_set[0][0])
+
     # for k in range(3):
     #     data_50hz, data_10hz, target = train_set[k]
     #     print(data_50hz)
@@ -70,9 +73,9 @@ with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv',
     #     show_curves(data_50hz, data_10hz, target)
     # plt.show()
 
-    optimizer = optim.SGD(model.parameters(),
-                          lr=args.lr,
-                          momentum=args.momentum)
-    trainer = Trainer(train_loader, test_loader, optimizer, classifier=model,
-                      log_every=10, save_folder='builds', transform=trainer_transform)
-    trainer.train(args.epochs)
+    # optimizer = optim.SGD(model.parameters(),
+    #                       lr=args.lr,
+    #                       momentum=args.momentum)
+    # trainer = Trainer(train_loader, test_loader, optimizer, classifier=model,
+    #                   log_every=10, save_folder='builds', transform=trainer_transform)
+    # trainer.train(args.epochs)
