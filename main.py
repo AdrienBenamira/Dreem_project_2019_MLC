@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 args = Parser().parse()
 use_cuda = torch.cuda.is_available()
 
-use_datasets = ['eeg_5', 'accelerometer_x']
+use_datasets = ['eeg_1', 'eeg_2', 'eeg_3', 'eeg_4', 'eeg_5', 'eeg_6', 'eeg_7']
 
 # Fist test, only 2 networks, 1 for eeg, 1 for accelerometers and pulse
 number_groups = 4
@@ -60,13 +60,14 @@ def trainer_transform(data_50hz, data_10hz):
 # Use context manager to close the datasets when we're finished!
 with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv',
                    keep_datasets=use_datasets, split_train_val=0.8, seed=args.seed,
-                   size=5000, transforms=dataset_transforms) as (train_set, val_set):
+                   size=5000) as (train_set, val_set):
     # train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
     # test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, num_workers=1)
-    # train_set.save_data('dataset/test.npy')
-    train_set.load_data('dataset/test.npy')
+    train_set.save_data('dataset/dataset_all_eeg.npy')
+    # train_set.load_data('dataset/dataset_all_eeg.npy')
 
-    # a, b, c = train_set[0]
+    data, _, targets = train_set[0]
+    print(data.shape)
     # train_set.sa
 
     # for k in range(3):

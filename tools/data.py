@@ -145,7 +145,11 @@ class DreemDataset:
                 and has a function as value that takes in a corresponding signal and has to return the transformed signal.
         """
         self.keys_to_keep = keys_to_keep
-        self.keep_datasets = keep_datasets
+        self.keep_datasets = keep_datasets if keys_to_keep is not None else ['eeg_1', 'eeg_2', 'eeg_3', 'eeg_4',
+                                                                             'eeg_5', 'eeg_6', 'eeg_7',
+                                                                             'accelerometer_x', 'accelerometer_y',
+                                                                             'accelerometer_z',
+                                                                             'pulse_oximeter_infrared']
         self.data_path = data_path
         self.target_path = target_path
         self.transforms = transforms if transforms is not None else {}
