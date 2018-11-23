@@ -122,7 +122,7 @@ class DreemDataset:
     datasets = None
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
-                 keys_to_keep: List[int] = None, transforms: dict = None):
+                 keys_to_keep: List[int] = None, transforms: dict = None, verbose=True):
         """
         Args:
             data_path: path to data
@@ -144,12 +144,13 @@ class DreemDataset:
             transforms: Dict of transformations to apply to the element. The dict is indexed by the name of the dataset
                 and has a function as value that takes in a corresponding signal and has to return the transformed signal.
         """
+        self.verbose = verbose
         self.keys_to_keep = keys_to_keep
-        self.keep_datasets = keep_datasets if keys_to_keep is not None else ['eeg_1', 'eeg_2', 'eeg_3', 'eeg_4',
-                                                                             'eeg_5', 'eeg_6', 'eeg_7',
-                                                                             'accelerometer_x', 'accelerometer_y',
-                                                                             'accelerometer_z',
-                                                                             'pulse_oximeter_infrared']
+        self.keep_datasets = keep_datasets if keep_datasets is not None else ['eeg_1', 'eeg_2', 'eeg_3', 'eeg_4',
+                                                                              'eeg_5', 'eeg_6', 'eeg_7',
+                                                                              'accelerometer_x', 'accelerometer_y',
+                                                                              'accelerometer_z',
+                                                                              'pulse_oximeter_infrared']
         self.data_path = data_path
         self.target_path = target_path
         self.transforms = transforms if transforms is not None else {}
@@ -174,23 +175,39 @@ class DreemDataset:
                     self.length = self.data[item].shape[0]
                 self.h5_datasets[item] = self.data[item]
 
-    def load_data(self, filename=None):
-        if filename is not None:
-            self.datasets = np.load(filename).item()
+    def get_dataset(self, dataset_name, path=None):
+        self.v_print("Loading dataset", dataset_name, "...")
+        if path is not None:
+            return np.load(path + "/" + dataset_name + ".npy")
         else:
-            print("Loading data in memory...")
-            self.datasets = {}
-            for dataset_name, dataset in self.h5_datasets.items():
-                self.datasets[dataset_name] = dataset[:]
-            print("Done.")
+            dataset = self.h5_datasets[dataset_name]
+            if dataset_name not in self.transforms.keys():
+                dataset = dataset[:]
+            else:
+                self.v_print("Apply transformations...")
+                dataset = self.transforms[dataset_name](dataset[:])
+                self.v_print("Applied.")
+            return dataset
+
+    def load_data(self, path=None):
+        self.v_print("Loading data in memory...")
+        self.v_print(len(self), "in", len(self.keep_datasets), "datasets to load")
+        self.datasets = {}
+        for dataset_name in self.h5_datasets.keys():
+            self.datasets[dataset_name] = self.get_dataset(dataset_name, path)
+        self.v_print("Done.")
 
     def load_targets(self, filename):
         self.targets = np.load(filename).item()
 
-    def save_data(self, filename):
-        if self.datasets is None:
-            self.load_data()
-        np.save(filename, self.datasets)
+    def save_data(self, path):
+        self.v_print("Saving into", path, "...")
+        if not os.path.exists(path):
+            os.mkdir(path)
+        for dataset_name in self.h5_datasets.keys():
+            dataset = self.get_dataset(dataset_name)  # Force not loading from path
+            np.save(path + "/" + dataset_name + ".npy", dataset[:])
+        self.v_print("Saved.")
 
     def save_targets(self, filename):
         np.save(filename, self.targets)
@@ -226,7 +243,7 @@ class DreemDataset:
         for dataset_name, dataset in self.datasets.items():
             data_len = len(dataset[item]) if not is_slice else len(dataset[item][0])
             data = dataset[item] if is_slice else np.expand_dims(dataset[item], 0)
-            data = data if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](data)
+            # data = data if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](data)
             data = data if is_slice else data[0]
             if data_len == 1500:
                 data_50hz.append(data)
@@ -242,3 +259,11 @@ class DreemDataset:
 
     def __len__(self):
         return self.length
+
+    def v_print(self, *text):
+        """
+        Verbose print.
+        Only prints if verbose is activated
+        """
+        if self.verbose:
+            print(*text)
