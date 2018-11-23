@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 args = Parser().parse()
 use_cuda = torch.cuda.is_available()
 
-use_datasets = ['eeg_1', 'eeg_4', 'eeg_5', 'eeg_6']
+use_datasets = ['eeg_1', 'eeg_2', 'eeg_3', 'eeg_4', 'eeg_5', 'eeg_6', 'eeg_7']
 
 # Fist test, only 2 networks, 1 for eeg, 1 for accelerometers and pulse
 number_groups = 4
@@ -63,7 +63,9 @@ with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv',
                    size=5000) as (train_set, val_set):
     # train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
     # test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, num_workers=1)
-    train_set.save_data('dataset/test')
+    train_set.save_data('dataset/all_eegs/train')
+    val_set.save_data('dataset/all_eegs/val')
+
     # train_set.load_data('dataset/dataset_all_eeg.npy')
 
     data, _, targets = train_set[0]
