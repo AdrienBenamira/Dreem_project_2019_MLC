@@ -61,10 +61,13 @@ def trainer_transform(data_50hz, data_10hz):
 with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv',
                    keep_datasets=use_datasets, split_train_val=0.8, seed=args.seed,
                    size=5000, transforms=dataset_transforms) as (train_set, val_set):
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
-    test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, num_workers=1)
+    # train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
+    # test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, num_workers=1)
+    # train_set.save_data('dataset/test.npy')
+    train_set.load_data('dataset/test.npy')
 
-    # print(train_set[0][0])
+    # a, b, c = train_set[0]
+    # train_set.sa
 
     # for k in range(3):
     #     data_50hz, data_10hz, target = train_set[k]

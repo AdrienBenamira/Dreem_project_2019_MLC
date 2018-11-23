@@ -21,6 +21,8 @@ class ExtractFeatures:
                 - mmd: maximum-minimum distance
                 - esis: EnergySis
         """
+        self.name = "extract_" + "_".join(features) + "_features" + (
+            "with_" + "_".join(bands) + "_bands" if bands is not None else "")
         self.window = window
         self.sampling_freq = sampling_freq
         available_features = {

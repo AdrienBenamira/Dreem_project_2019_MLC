@@ -11,6 +11,7 @@ class ExtractBands:
         Args:
             bands: bands to get. If None or '*', all available bands are returned.
         """
+        self.name = "extract_" + "_".join(bands) if type(bands) == list else "*" + "_bands"
         self.extractors = {
             'delta': BandPass(freq_min=0, freq_max=4),
             'theta': BandPass(freq_min=4, freq_max=8),
@@ -40,6 +41,7 @@ class ExtractBands:
 
 class ExtractSpectrum:
     def __init__(self, window, sampling_freq=50):
+        self.name = "extract_spectrum_with_window_" + str(window)
         self.sampling_freq = sampling_freq
         self.window = window
 

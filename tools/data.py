@@ -1,4 +1,6 @@
 import os
+import pickle
+
 import numpy as np
 import h5py
 import csv
@@ -10,8 +12,8 @@ __all__ = ['DreemDataset', 'DreemDatasets']
 
 
 def split_train_validation(len_dataset: int, percent_train: float,
-                           seed: float = None, length: int = None, index_labels: dict = None) -> Tuple[
-    List[int], List[int]]:
+                           seed: float = None, length: int = None,
+                           index_labels: dict = None) -> Tuple[List[int], List[int]]:
     """
     Splits between train set and validation set
     Args:
@@ -30,9 +32,13 @@ def split_train_validation(len_dataset: int, percent_train: float,
         len_dataset = len_dataset if length is None or length > len_dataset else length
         items = np.arange(0, len_dataset, dtype=np.int)
     else:
-        taille_min_sac = len(index_labels[1])
-        sample = [np.random.choice(index_labels[i], taille_min_sac) for i in range(5)]
-        items = np.array([i for j in sample for i in j])
+        taille_min_sac = min([len(index_labels[k]) for k in range(5)])
+        samples = []
+        for k in range(5):
+            labels = index_labels[k]
+            np.random.shuffle(labels)
+            samples.append(labels[:taille_min_sac])
+        items = np.array([i for j in samples for i in j])
     np.random.shuffle(items)
     split = int(percent_train * len(items))
     return items[:split], items[split:]
@@ -164,10 +170,26 @@ class DreemDataset:
                     self.length = self.data[item].shape[0]
                 self.h5_datasets[item] = self.data[item]
 
-    def load_data(self):
-        self.datasets = {}
-        for dataset_name, dataset in self.h5_datasets.items():
-            self.datasets[dataset_name] = dataset[:]
+    def load_data(self, filename=None):
+        if filename is not None:
+            self.datasets = np.load(filename).item()
+        else:
+            print("Loading data in memory...")
+            self.datasets = {}
+            for dataset_name, dataset in self.h5_datasets.items():
+                self.datasets[dataset_name] = dataset[:]
+            print("Done.")
+
+    def load_targets(self, filename):
+        self.targets = np.load(filename).item()
+
+    def save_data(self, filename):
+        if self.datasets is None:
+            self.load_data()
+        np.save(filename, self.datasets)
+
+    def save_targets(self, filename):
+        np.save(filename, self.targets)
 
     def _load_target(self, target_path):
         path = os.path.abspath(os.path.join(os.curdir, target_path))
@@ -196,9 +218,7 @@ class DreemDataset:
         data_50hz = []
         data_10hz = []
         if self.datasets is None:
-            print("Loading data in memory...")
             self.load_data()
-            print("Done.")
         for dataset_name, dataset in self.datasets.items():
             data_len = len(dataset[item]) if not is_slice else len(dataset[item][0])
             data = dataset[item] if is_slice else np.expand_dims(dataset[item], 0)
@@ -211,8 +231,10 @@ class DreemDataset:
         data_50hz = np.array(data_50hz)
         data_10hz = np.array(data_10hz)
         targets = np.array([self.targets[i] for i in item]) if is_slice else self.targets[item]
-        return (torch.tensor(data_50hz), torch.tensor(data_10hz),
-                torch.tensor(targets)) if self.targets is not None else (torch.tensor(data_50hz), torch.tensor(data_10hz))
+        return (torch.tensor(data_50hz),
+                torch.tensor(data_10hz),
+                torch.tensor(targets)) if self.targets is not None else (torch.tensor(data_50hz),
+                                                                         torch.tensor(data_10hz))
 
     def __len__(self):
         return self.length
