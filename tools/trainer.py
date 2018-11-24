@@ -46,8 +46,7 @@ class GenericTrainer:
             self.model_10hz.train()
         if self.classifier is not None:
             self.classifier.train()
-
-        with tqdm(total=len(self.train_loader.dataset) / self.train_loader.dataset[0][0].size(0)) as t:
+        with tqdm(total=len(self.train_loader.dataset) / self.train_loader.batch_size) as t:
             for batch_id, (data_50hz, data_10hz, target) in enumerate(self.train_loader):
                 if use_cuda:
                     data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
@@ -72,7 +71,7 @@ class GenericTrainer:
         validation_loss = 0
         correct = 0
         batch_size = None
-        with tqdm(total=len(self.val_loader.dataset) / self.val_loader.dataset[0][0].size(0)) as t:
+        with tqdm(total=len(self.val_loader.dataset) / self.val_loader.batch_size) as t:
             for batch_id, (data_50hz, data_10hz, target) in enumerate(self.val_loader):
                 if batch_size is None:
                     batch_size = target.size(0)
@@ -106,21 +105,15 @@ class GenericTrainer:
             self.step_train(epoch)
             self.step_val(epoch)
             if self.save_folder is not None:
-                try:
+                if self.model_50hz is not None:
                     model_file = path + '/model_50hz.pth'
                     torch.save(self.model_50hz.state_dict(), model_file)
-                except Exception as e:
-                    print(e)
-                try:
+                if self.model_10hz is not None:
                     model_file = path + '/model_10hz.pth'
                     torch.save(self.model_10hz.state_dict(), model_file)
-                except Exception as e:
-                    print(e)
-                try:
+                if self.classifier is not None:
                     model_file = path + '/classifier.pth'
                     torch.save(self.classifier.state_dict(), model_file)
-                except Exception as e:
-                    print(e)
             print('\nSaved models in ' + path + '.')
 
     def forward(self, data_50hz, data_10hz, target):
@@ -129,9 +122,11 @@ class GenericTrainer:
 
 class CNNTrainer(GenericTrainer):
     def forward(self, data_50hz, data_10hz, target):
-        out_50hz = self.model_50hz(data_50hz)
-        out_10hz = self.model_10hz(data_10hz)
-        out = self.classifier(torch.cat((out_50hz, out_10hz), dim=-1))
+        out = self.model_50hz(data_50hz)
+        if self.model_10hz is not None:
+            out_10hz = self.model_10hz(data_10hz)
+            out = torch.cat((out, out_10hz), dim=-1)
+        out = self.classifier(out)
         criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
         loss = criterion(out, target)
         return loss, out

@@ -6,7 +6,7 @@ __all__ = ['Parser']
 class Parser:
     def __init__(self):
         self.parser = argparse.ArgumentParser(description='Dreem training')
-        self.parser.add_argument('-b', '--batch-size', type=int, default=4,
+        self.parser.add_argument('-b', '--batch-size', type=int, default=64,
                                  help="Batch size")
         self.parser.add_argument('-s', '--seed', type=float, default=1,
                                  help="Seed")

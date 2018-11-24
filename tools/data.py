@@ -158,12 +158,17 @@ class DreemDataset:
         self.separation_50hz_10hz = [['eeg_1', 'eeg_2', 'eeg_3', 'eeg_4', 'eeg_5', 'eeg_6', 'eeg_7'],
                                      ['accelerometer_x', 'accelerometer_y', 'accelerometer_z',
                                       'pulse_oximeter_infrared']]
+        self.as_torch_dataset = False
 
     def init(self):
         self._open_datasets(self.data_path)
         if self.target_path is not None:
             self._load_target(self.target_path)
         self.length = self.length if self.keys_to_keep is None else len(self.keys_to_keep)
+        return self
+
+    def torch_dataset(self):
+        self.as_torch_dataset = True
         return self
 
     def set_keys_to_keep(self, keys_to_keep: List[int]):
@@ -257,6 +262,12 @@ class DreemDataset:
         data_50hz = np.array(data_50hz)
         data_10hz = np.array(data_10hz)
         targets = self.targets[item]
+        if not data_10hz:
+            data_10hz = np.array([[0]])
+        if self.as_torch_dataset:
+            data_50hz = torch.tensor(data_50hz)
+            data_10hz = torch.tensor(data_10hz)
+            targets = torch.tensor(targets, dtype=torch.int64)
         return (data_50hz, data_10hz, targets) if self.targets is not None else (data_50hz, data_10hz)
 
     def __len__(self):
