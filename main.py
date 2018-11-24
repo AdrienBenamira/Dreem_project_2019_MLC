@@ -37,11 +37,13 @@ if use_cuda:
     # classifier.cuda()
 
 dataset_transforms = {
-    "eeg_1": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
-    "eeg_2": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
-    "eeg_3": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
-    "eeg_4": Compose([ExtractBands(), ExtractSpectrum(window=50)]),
-    "eeg_5": ExtractFeatures(['esis'], bands='*'),
+    "eeg_1": Compose([ExtractBands(), ExtractSpectrum(window=100)]),
+    "eeg_2": Compose([ExtractBands(), ExtractSpectrum(window=100)]),
+    "eeg_3": Compose([ExtractBands(), ExtractSpectrum(window=100)]),
+    "eeg_4": Compose([ExtractBands(), ExtractSpectrum(window=100)]),
+    "eeg_5": Compose([ExtractBands(), ExtractSpectrum(window=100)]),
+    "eeg_6": Compose([ExtractBands(), ExtractSpectrum(window=100)]),
+    "eeg_7": Compose([ExtractBands(), ExtractSpectrum(window=100)]),
     "accelerometer_x": ExtractFeatures(['energy']),
     "accelerometer_y": ExtractFeatures(['energy']),
     "accelerometer_z": ExtractFeatures(['energy']),
@@ -60,16 +62,16 @@ def trainer_transform(data_50hz, data_10hz):
 # Use context manager to close the datasets when we're finished!
 with DreemDatasets('dataset/train.h5', 'dataset/train_y.csv',
                    keep_datasets=use_datasets, split_train_val=0.8, seed=args.seed,
-                   size=5000) as (train_set, val_set):
+                   size=5000, transforms=dataset_transforms) as (train_set, val_set):
     # train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
     # test_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, num_workers=1)
-    train_set.save_data('dataset/all_eegs/train')
-    val_set.save_data('dataset/all_eegs/val')
+    train_set.save_data('dataset/eegs_band_spectrum/train')
+    val_set.save_data('dataset/eegs_band_spectrum/val')
 
     # train_set.load_data('dataset/dataset_all_eeg.npy')
 
-    data, _, targets = train_set[0]
-    print(data.shape)
+    # data, _, targets = train_set[0]
+    # print(data.shape)
     # train_set.sa
 
     # for k in range(3):

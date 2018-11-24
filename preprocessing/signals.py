@@ -60,7 +60,7 @@ class ExtractSpectrum:
             return np.array(features)
 
     def get_spectrum(self, signal):
-        range_signal = range(0, len(signal), self.window)
+        range_signal = range(0, signal.shape[1], self.window)
         d = np.zeros((signal.shape[0], len(list(range_signal)), self.window))
         for b in range(signal.shape[0]):  # for each signal in batch
             for i, k in enumerate(range_signal):

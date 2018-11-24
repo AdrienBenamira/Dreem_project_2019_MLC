@@ -51,7 +51,7 @@ class DreemDatasets:
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
                  split_train_val: float = 0.8, seed: float = None, balance_data=True, size=None,
-                 transforms: dict = None, transforms_val: dict = None):
+                 transforms: dict = None, transforms_val: dict = None, verbose=True):
         """
         Args:
             data_path: path to data
@@ -88,11 +88,12 @@ class DreemDatasets:
         self.size = size
         self.transforms = transforms if transforms is not None else {}
         self.transforms_val = transforms_val if transforms_val is not None else self.transforms
+        self.verbose = verbose
 
     def get(self):
         # Start by initialising the first one to get the size of the dataset
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets,
-                                  transforms=self.transforms).init()
+                                  transforms=self.transforms, verbose=self.verbose).init()
         # Get the split
         if self.balance_data:
             keys_train, keys_val = split_train_validation(len(self.index_labels[1]), self.split_train_val, self.seed,
@@ -101,7 +102,7 @@ class DreemDatasets:
             keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed, self.size)
         self.train.set_keys_to_keep(keys_train)
         self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val,
-                                transforms=self.transforms_val).init()
+                                transforms=self.transforms_val, verbose=self.verbose).init()
         return self.train, self.val
 
     def __enter__(self):
@@ -154,6 +155,9 @@ class DreemDataset:
         self.data_path = data_path
         self.target_path = target_path
         self.transforms = transforms if transforms is not None else {}
+        self.separation_50hz_10hz = [['eeg_1', 'eeg_2', 'eeg_3', 'eeg_4', 'eeg_5', 'eeg_6', 'eeg_7'],
+                                     ['accelerometer_x', 'accelerometer_y', 'accelerometer_z',
+                                      'pulse_oximeter_infrared']]
 
     def init(self):
         self._open_datasets(self.data_path)
@@ -181,11 +185,10 @@ class DreemDataset:
             return np.load(path + "/" + dataset_name + ".npy")
         else:
             dataset = self.h5_datasets[dataset_name]
-            if dataset_name not in self.transforms.keys():
-                dataset = dataset[:]
-            else:
+            dataset = dataset[:][self.keys_to_keep]  # Only keep the keys_to_keep elements
+            if dataset_name in self.transforms.keys():
                 self.v_print("Apply transformations...")
-                dataset = self.transforms[dataset_name](dataset[:])
+                dataset = self.transforms[dataset_name](dataset)
                 self.v_print("Applied.")
             return dataset
 
@@ -195,12 +198,13 @@ class DreemDataset:
         self.datasets = {}
         for dataset_name in self.h5_datasets.keys():
             self.datasets[dataset_name] = self.get_dataset(dataset_name, path)
+        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         if path is not None:
             self.load_targets(path + "/" + "targets.npy")
         self.v_print("Done.")
 
     def load_targets(self, filename):
-        self.targets = np.load(filename).item()
+        self.targets = np.load(filename)
 
     def save_data(self, path):
         self.v_print("Saving into", path, "...")
@@ -208,7 +212,8 @@ class DreemDataset:
             os.makedirs(path)
         for dataset_name in self.h5_datasets.keys():
             dataset = self.get_dataset(dataset_name)  # Force not loading from path
-            np.save(path + "/" + dataset_name + ".npy", dataset[:])
+            np.save(path + "/" + dataset_name + ".npy", dataset)
+        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         self.save_targets(path + "/" + "targets.npy")
         self.v_print("Saved.")
 
@@ -237,28 +242,22 @@ class DreemDataset:
         self.close()
 
     def __getitem__(self, item):
-        is_slice = type(item) == slice
-        item = item if self.keys_to_keep is None else self.keys_to_keep[item]
+        # item = item if self.keys_to_keep is None else self.keys_to_keep[item]
         data_50hz = []
         data_10hz = []
         if self.datasets is None:
             self.load_data()
         for dataset_name, dataset in self.datasets.items():
-            data_len = len(dataset[item]) if not is_slice else len(dataset[item][0])
-            data = dataset[item] if is_slice else np.expand_dims(dataset[item], 0)
+            data = dataset[item]
             # data = data if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](data)
-            data = data if is_slice else data[0]
-            if data_len == 1500:
+            if dataset_name in self.separation_50hz_10hz[0]:
                 data_50hz.append(data)
             else:
                 data_10hz.append(data)
         data_50hz = np.array(data_50hz)
         data_10hz = np.array(data_10hz)
-        targets = np.array([self.targets[i] for i in item]) if is_slice else self.targets[item]
-        return (torch.tensor(data_50hz),
-                torch.tensor(data_10hz),
-                torch.tensor(targets)) if self.targets is not None else (torch.tensor(data_50hz),
-                                                                         torch.tensor(data_10hz))
+        targets = self.targets[item]
+        return (data_50hz, data_10hz, targets) if self.targets is not None else (data_50hz, data_10hz)
 
     def __len__(self):
         return self.length
