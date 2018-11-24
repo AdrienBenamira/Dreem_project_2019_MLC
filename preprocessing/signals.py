@@ -21,7 +21,7 @@ class ExtractBands:
         self.bands = self.extractors.keys() if (bands is None or bands == '*') else bands
         self.frequencies = [(self.extractors[band].freq_min, self.extractors[band].freq_max) for band in self.bands]
 
-    def __call__(self, batch_signal):
+    def __call__(self, batch_signal, target):
         """
         Extract the different wave bands from the signal
         Args:
@@ -40,7 +40,7 @@ class ExtractBands:
 
 
 class ExtractSpectrum:
-    def __init__(self, window, sampling_freq=50):
+    def __init__(self, window, target, sampling_freq=50):
         self.name = "extract_spectrum_with_window_" + str(window)
         self.sampling_freq = sampling_freq
         self.window = window

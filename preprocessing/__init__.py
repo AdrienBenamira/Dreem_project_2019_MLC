@@ -7,7 +7,7 @@ class Compose:
         self.transformations = transformations
         self.name = "_".join([transformation.name for transformation in self.transformations])
 
-    def __call__(self, signal):
+    def __call__(self, signal, target):
         for transfo in self.transformations:
-            signal = transfo(signal)
+            signal = transfo(signal, target)
         return signal

@@ -38,7 +38,7 @@ class ExtractFeatures:
         self.bands = bands
         self.extract_bands = ExtractBands(self.bands) if self.bands is not None else None
 
-    def __call__(self, signal):
+    def __call__(self, signal, target):
         """
         Args:
             signal: signal. Either one batch of signals of dimension 1500 (sampled at 50hz) or all bands for one batch of

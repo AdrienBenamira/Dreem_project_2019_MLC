@@ -193,7 +193,7 @@ class DreemDataset:
             dataset = dataset[:][self.keys_to_keep]  # Only keep the keys_to_keep elements
             if dataset_name in self.transforms.keys():
                 self.v_print("Apply transformations...")
-                dataset = self.transforms[dataset_name](dataset)
+                dataset = self.transforms[dataset_name](dataset, self.targets)
                 self.v_print("Applied.")
             return dataset
 
@@ -201,9 +201,9 @@ class DreemDataset:
         self.v_print("Loading data in memory...")
         self.v_print(len(self), "in", len(self.keep_datasets), "datasets to load")
         self.datasets = {}
+        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         for dataset_name in self.h5_datasets.keys():
             self.datasets[dataset_name] = self.get_dataset(dataset_name, path)
-        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         if path is not None:
             self.load_targets(path + "/" + "targets.npy")
         self.v_print("Done.")
@@ -215,10 +215,10 @@ class DreemDataset:
         self.v_print("Saving into", path, "...")
         if not os.path.exists(path):
             os.makedirs(path)
+        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         for dataset_name in self.h5_datasets.keys():
             dataset = self.get_dataset(dataset_name)  # Force not loading from path
             np.save(path + "/" + dataset_name + ".npy", dataset)
-        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         self.save_targets(path + "/" + "targets.npy")
         self.v_print("Saved.")
 
