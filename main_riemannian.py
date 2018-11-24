@@ -114,6 +114,19 @@ class Riemannian_Model:
         self.eval_time += end_eval - start_eval
         self.eval_trials += len(self.eval_label)
 
+        labels_pred = clf.predict(eval_feat)
+        CM = confusion_matrix(self.eval_label, labels_pred)
+        Acc = accuracy_score(self.eval_label, labels_pred)
+        F1 = f1_score(self.eval_label, labels_pred, average='macro')
+
+        print(CM, Acc, F1)
+
+
+
+
+
+
+
         return success_rate
 
     def load_data(self):
@@ -134,7 +147,7 @@ class Riemannian_Model:
             print(self.train_data.shape, self.train_label.shape)
 
 
-    def get_data(self, train= True, PATH = "dataset/all_eegs/train/", one_vs_all = True, limit_300= True):
+    def get_data(self, train= True, PATH = "dataset/all_eegs/train/", one_vs_all = True, limit_300= False):
 
         if train:
             X = np.zeros((7, 5412, 1500))
@@ -157,9 +170,10 @@ class Riemannian_Model:
             #Y = np.load("./dataset/Y_labels_val_equilibrate.npy")
 
         if one_vs_all:
-            Y[Y == 2] = 1
             Y[Y > 2] = 0
             Y[Y < 2] = 0
+            Y[Y == 2] = 1
+
 
         if limit_300:
             X = X[:300]
