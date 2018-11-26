@@ -1,106 +1,101 @@
 #!/usr/bin/env python3
 
 ''' 
-Model for Riemannian feature calculation and classification for EEG data
+Model for common spatial pattern (CSP) feature calculation and classification for EEG data
 '''
 
 import time
 
 import numpy as np
+from tools.csp import generate_projection, generate_eye, extract_feature
+from tools.filters import load_filterbank
 from sklearn.model_selection import KFold
 from sklearn.svm import LinearSVC, SVC
-
-from models.filters import load_filterbank
-from models.riemannian_multiscale import riemannian_multiscale
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
 
 from sklearn.ensemble import RandomForestClassifier
-import numpy as np
-from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
-from sklearn.linear_model import LogisticRegression
-
-
-
-
 __author__ = "Michael Hersche and Tino Rellstab"
 __email__ = "herschmi@ethz.ch,tinor@ethz.ch"
-import os
 
 
-class Riemannian_Model:
+class CSP_Model:
     def __init__(self):
         self.crossvalidation = False
         self.data_path = 'dataset/'
-        self.svm_kernel = 'RF'  # 'sigmoid'#'linear' # 'sigmoid', 'rbf',
-        self.svm_c = 0.1  # for linear 0.1 (inverse),
+        self.svm_kernel = 'RF'  # 'sigmoid'#'linear' # 'sigmoid', 'rbf', 'poly'
+        self.svm_c = 0.1  # 0.05 for linear, 20 for rbf, poly: 0.1
+        self.useCSP = True
         self.NO_splits = 5  # number of folds in cross validation
         self.fs = 50.  # sampling frequency
         self.NO_channels = 7  # number of EEG channels
         self.NO_subjects = 1
-        self.NO_riem = int(
-            self.NO_channels * (self.NO_channels + 1) / 2)  # Total number of CSP feature per band and timewindow
-        # self.bw = np.array([2,4,8,16,32]) # bandwidth of filtered signals
-        self.bw = np.array([0, 4, 8, 13, 22])
+        self.NO_csp = 24  # Total number of CSP feature per band and timewindow
+        self.bw = np.array([2, 4, 8, 16, 22])  # bandwidth of filtered signals
+        # self.bw = np.array([1,2,4,8,16,32])
         self.ftype = 'butter'  # 'fir', 'butter'
         self.forder = 2  # 4
-        self.filter_bank = load_filterbank(self.bw, self.fs, order=self.forder, max_freq=20,
+        self.filter_bank = load_filterbank(self.bw, self.fs, order=self.forder, max_freq=23,
                                            ftype=self.ftype)  # get filterbank coeffs
         time_windows_flt = np.array([[0, 30],
                                      [15, 30],
                                      [10, 25],
-                                     [0, 30],
+                                     [5, 20],
                                      [0, 15],
                                      [15, 25],
                                      [10, 20],
                                      [5, 15],
-                                     [0, 10]]) * self.fs
+                                     [0, 10],
+                                     [0, 30]]) * self.fs  # time windows in [s] x fs for using as a feature
+
         self.time_windows = time_windows_flt.astype(int)
         # restrict time windows and frequency bands
-        self.time_windows = self.time_windows[2:3]  # use only largest timewindow
-        #self.f_bands_nom = self.f_bands_nom[18:27] # use only 4Hz-32Hz bands
-        self.rho = 0.1
+        # self.time_windows = self.time_windows[10] # use only largest timewindow
+        # self.filter_bank = self.filter_bank[18:27] # use only 4Hz bands
+
         self.NO_bands = self.filter_bank.shape[0]
-        self.NO_time_windows = self.time_windows.shape[0]
-        self.NO_features = self.NO_riem * self.NO_bands * self.NO_time_windows
-        self.riem_opt = "No_Adaptation"  # {"Riemann","Riemann_Euclid","Whitened_Euclid","No_Adaptation"}
-        # time measurements
+        self.NO_time_windows = int(self.time_windows.size / 2)
+        self.NO_features = self.NO_csp * self.NO_bands * self.NO_time_windows
         self.train_time = 0
         self.train_trials = 0
         self.eval_time = 0
         self.eval_trials = 0
 
-    def run_riemannian(self):
+    def run_csp(self):
 
         ################################ Training ############################################################################
         start_train = time.time()
+        # 1. Apply CSP to bands to get spatial filter
+        if self.useCSP:
+            w = generate_projection(self.train_data, self.train_label, self.NO_csp, self.filter_bank, self.time_windows, NO_classes=5
 
-        # 1. calculate features and mean covariance for training
-        riemann = riemannian_multiscale(self.filter_bank, self.time_windows, riem_opt=self.riem_opt, rho=self.rho,
-                                        vectorized=True)
-        train_feat = riemann.fit(self.train_data)
-
-        np.save("./dataset/all_eegs_balanced/save_features_30000_R.npy", train_feat)
+                                    )
+        else:
+            w = generate_eye(self.train_data, self.train_label, self.filter_bank, self.time_windows)
 
 
+
+        # 2. Extract features for training
+        feature_mat = extract_feature(self.train_data, w, self.filter_bank, self.time_windows)
+        #np.save("./dataset/all_eegs_balanced/features_all_csp.npy", feature_mat)
+        #feature_mat = np.load("./dataset/all_eegs_balanced/features_all_csp.npy")
+
+        # 3. Stage Train SVM Model
+        # 2. Train NN
+        # 3. Stage Train SVM Model
         # 2. Train SVM Model
         if self.svm_kernel == 'linear':
-            clf = LinearSVC(C=self.svm_c, intercept_scaling=1, loss='hinge', max_iter=1000, multi_class='ovr',
+            clf = LinearSVC(C=self.svm_c, intercept_scaling=1, loss='hinge', max_iter=10000, multi_class='ovr',
                             penalty='l2', random_state=1, tol=0.00001)
 
         elif self.svm_kernel == 'RF':
 
             clf = RandomForestClassifier(n_estimators=100, random_state=0)
-            clf_verif = RandomForestClassifier(n_estimators=100, random_state=0)
 
-            #LR = LogisticRegression(solver='lbfgs', multi_class='multinomial', max_iter=100)
-
-            print("ok")
 
         else:
             clf = SVC(self.svm_c, self.svm_kernel, degree=10, gamma='auto', coef0=0.0, tol=0.001, cache_size=10000,
                       max_iter=-1, decision_function_shape='ovr')
-
-        clf.fit(train_feat, self.train_label)
-        clf_verif.fit(self.train_data.reshape(-1, 7 * 1500), self.train_label)
+        clf.fit(feature_mat, self.train_label)
 
         end_train = time.time()
         self.train_time += end_train - start_train
@@ -108,39 +103,35 @@ class Riemannian_Model:
 
         ################################# Evaluation ###################################################
         start_eval = time.time()
+        eval_feature_mat = extract_feature(self.eval_data, w, self.filter_bank, self.time_windows)
+        #np.save("./dataset/all_eegs_balanced/features_5000_csp_test.npy", eval_feature_mat)
+        #eval_feature_mat = np.load("./dataset/all_eegs_balanced/features_5000_csp_val.npy")
 
-        eval_feat = riemann.features(self.eval_data)
-
-        success_rate = clf.score(eval_feat, self.eval_label)
+        #success_rate = clf.score(eval_feature_mat, self.eval_label)
 
         end_eval = time.time()
 
         # print("Time for one Evaluation " + str((end_eval-start_eval)/len(self.eval_label)) )
 
         self.eval_time += end_eval - start_eval
-        self.eval_trials += len(self.eval_label)
+        #self.eval_trials += len(self.eval_label)
 
-        labels_pred = clf.predict(eval_feat)
+        labels_pred = clf.predict(eval_feature_mat)
+
+        import pandas as pd
+        df = pd.DataFrame(labels_pred)
+        #df.to_csv("labels_pred_t.csv")
+
+
         CM = confusion_matrix(self.eval_label, labels_pred)
         Acc = accuracy_score(self.eval_label, labels_pred)
         F1 = f1_score(self.eval_label, labels_pred, average='macro')
 
-        print(CM, Acc, F1)
-
-        labels_pred = clf_verif.predict(self.eval_data.reshape(-1, 7 * 1500))
-        CM = confusion_matrix(self.eval_label, labels_pred)
-        Acc = accuracy_score(self.eval_label, labels_pred)
-        F1 = f1_score(self.eval_label, labels_pred, average='macro')
 
         print(CM, Acc, F1)
 
 
-
-
-
-
-
-        return success_rate
+        return (F1)
 
     def load_data(self):
         if self.crossvalidation:
@@ -155,9 +146,8 @@ class Riemannian_Model:
                     self.eval_label = label[test_index]
                 split += 1
         else:
-            self.train_data, self.train_label = self.get_data( train = True, one_vs_all = False)
-            self.eval_data, self.eval_label = self.get_data( train = False, one_vs_all = False)
-            print(self.train_data.shape, self.train_label.shape)
+            self.train_data, self.train_label = self.get_data(one_vs_all = False)
+            self.eval_data, self.eval_label = self.get_data(train = False, one_vs_all = False)
 
 
     def get_data(self, train= True,  one_vs_all = False, limit_300= False):
@@ -169,7 +159,7 @@ class Riemannian_Model:
                 Y = np.load("dataset/all_eegs/train/targets.npy")[:500]
                 X = X.transpose((1, 0, 2))
             else:
-                X = np.zeros((7, 5000, 1500))
+                X = np.zeros((7, 500, 1500))
                 for i in range(7):
                     X[i] = np.load("dataset/all_eegs/val/eeg_" + str(i + 1) + ".npy")[:500]
                 Y = np.load("dataset/all_eegs/val/targets.npy")[:500]
@@ -198,11 +188,9 @@ class Riemannian_Model:
 
 
 def main():
-    model = Riemannian_Model()
+    model = CSP_Model()
 
     print("Number of used features: " + str(model.NO_features))
-
-    print(model.riem_opt)
 
     # success rate sum over all subjects
     success_tot_sum = 0
@@ -211,7 +199,6 @@ def main():
         print("Cross validation run")
     else:
         print("Test data set")
-
     start = time.time()
 
     # Go through all subjects
@@ -225,21 +212,18 @@ def main():
 
             for model.split in range(model.NO_splits):
                 model.load_data()
-                success_sub_sum += model.run_riemannian()
-
+                success_sub_sum += model.run_csp()
+                print(success_sub_sum / (model.split + 1))
             # average over all splits
             success_rate = success_sub_sum / model.NO_splits
-
-
 
         else:
             # load Eval data
             model.load_data()
-            success_rate = model.run_riemannian()
+            success_rate = model.run_csp()
 
         print(success_rate)
         success_tot_sum += success_rate
-
 
 
     # Average success rate over all subjects
