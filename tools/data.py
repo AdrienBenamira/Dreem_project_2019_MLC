@@ -165,6 +165,7 @@ class DreemDataset:
         if self.target_path is not None:
             self._load_target(self.target_path)
         self.length = self.length if self.keys_to_keep is None else len(self.keys_to_keep)
+        self.keys_to_keep = self.keys_to_keep if self.keys_to_keep is not None else list(range(self.length))
         return self
 
     def torch_dataset(self):
@@ -201,7 +202,8 @@ class DreemDataset:
         self.v_print("Loading data in memory...")
         self.v_print(len(self), "in", len(self.keep_datasets), "datasets to load")
         self.datasets = {}
-        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
+        if self.targets is not None:
+            self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         for dataset_name in self.h5_datasets.keys():
             self.datasets[dataset_name] = self.get_dataset(dataset_name, path)
         if path is not None:
