@@ -165,6 +165,7 @@ class DreemDataset:
         if self.target_path is not None:
             self._load_target(self.target_path)
         self.length = self.length if self.keys_to_keep is None else len(self.keys_to_keep)
+        self.keys_to_keep = self.keys_to_keep if self.keys_to_keep is not None else list(range(self.length))
         return self
 
     def torch_dataset(self):

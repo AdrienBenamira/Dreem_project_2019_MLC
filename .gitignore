@@ -9,3 +9,5 @@ documentation/
 *.pyc
 __pycache__/
 .ipynb*
+*.npy
+

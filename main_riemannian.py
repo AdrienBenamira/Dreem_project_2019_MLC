@@ -55,7 +55,7 @@ class Riemannian_Model:
                                      [0, 10]]) * self.fs
         self.time_windows = time_windows_flt.astype(int)
         # restrict time windows and frequency bands
-        self.time_windows = self.time_windows[2:3]  # use only largest timewindow
+        #self.time_windows = self.time_windows[2:3]  # use only largest timewindow
         #self.f_bands_nom = self.f_bands_nom[18:27] # use only 4Hz-32Hz bands
         self.rho = 0.1
         self.NO_bands = self.filter_bank.shape[0]
@@ -163,16 +163,16 @@ class Riemannian_Model:
     def get_data(self, train= True,  one_vs_all = False, limit_300= False):
         if not one_vs_all:
             if train:
-                X = np.zeros((7, 500, 1500))
+                X = np.zeros((7, 30631, 1500))
                 for i in range(7):
-                    X[i] = np.load("dataset/all_eegs/train/eeg_" + str(i + 1) + ".npy")[:500]
-                Y = np.load("dataset/all_eegs/train/targets.npy")[:500]
+                    X[i] = np.load("dataset/all_eegs/train/eeg_" + str(i + 1) + ".npy")
+                Y = np.load("dataset/all_eegs/train/targets.npy")
                 X = X.transpose((1, 0, 2))
             else:
-                X = np.zeros((7, 5000, 1500))
+                X = np.zeros((7, 7658, 1500))
                 for i in range(7):
-                    X[i] = np.load("dataset/all_eegs/val/eeg_" + str(i + 1) + ".npy")[:500]
-                Y = np.load("dataset/all_eegs/val/targets.npy")[:500]
+                    X[i] = np.load("dataset/all_eegs/val/eeg_" + str(i + 1) + ".npy")
+                Y = np.load("dataset/all_eegs/val/targets.npy")
                 X = X.transpose((1, 0, 2))
         if one_vs_all:
             if train:
