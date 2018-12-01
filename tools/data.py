@@ -7,6 +7,8 @@ import csv
 import torch
 import pandas as pd
 from typing import List, Tuple
+from tqdm import tqdm
+from torchvision.models import vgg11
 
 __all__ = ['DreemDataset', 'DreemDatasets']
 
@@ -51,9 +53,10 @@ class DreemDatasets:
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
                  split_train_val: float = 0.8, seed: float = None, balance_data=True, size=None,
-                 transforms: dict = None, transforms_val: dict = None, verbose=True):
+                 transforms: dict = None, transforms_val: dict = None, verbose=True, load_lazy=False):
         """
         Args:
+            use_h5_dataset: If True, uses the H5 dataset instead of npy
             data_path: path to data
             target_path: path to labels, if None, no labels
             keep_datasets: default None, if list, only keep the data sets in the list.
@@ -89,11 +92,12 @@ class DreemDatasets:
         self.transforms = transforms if transforms is not None else {}
         self.transforms_val = transforms_val if transforms_val is not None else self.transforms
         self.verbose = verbose
+        self.load_lazy = load_lazy
 
     def get(self):
         # Start by initialising the first one to get the size of the dataset
         self.train = DreemDataset(self.data_path, self.target_path, self.keep_datasets,
-                                  transforms=self.transforms, verbose=self.verbose).init()
+                                  transforms=self.transforms, verbose=self.verbose, load_lazy=self.load_lazy).init()
         # Get the split
         if self.balance_data:
             keys_train, keys_val = split_train_validation(len(self.index_labels[1]), self.split_train_val, self.seed,
@@ -102,7 +106,7 @@ class DreemDatasets:
             keys_train, keys_val = split_train_validation(len(self.train), self.split_train_val, self.seed, self.size)
         self.train.set_keys_to_keep(keys_train)
         self.val = DreemDataset(self.data_path, self.target_path, self.keep_datasets, keys_val,
-                                transforms=self.transforms_val, verbose=self.verbose).init()
+                                transforms=self.transforms_val, verbose=self.verbose, load_lazy=self.load_lazy).init()
         return self.train, self.val
 
     def __enter__(self):
@@ -121,9 +125,10 @@ class DreemDataset:
     length = None
     h5_datasets = {}
     datasets = None
+    data = None
 
     def __init__(self, data_path: str, target_path: str = None, keep_datasets: List[str] = None,
-                 keys_to_keep: List[int] = None, transforms: dict = None, verbose=True):
+                 keys_to_keep: List[int] = None, transforms: dict = None, verbose=True, load_lazy=False):
         """
         Args:
             data_path: path to data
@@ -159,13 +164,16 @@ class DreemDataset:
                                      ['accelerometer_x', 'accelerometer_y', 'accelerometer_z',
                                       'pulse_oximeter_infrared']]
         self.as_torch_dataset = False
+        self.opened_files = []
+        self.load_lazy = load_lazy
 
     def init(self):
         self._open_datasets(self.data_path)
         if self.target_path is not None:
             self._load_target(self.target_path)
         self.length = self.length if self.keys_to_keep is None else len(self.keys_to_keep)
-        self.keys_to_keep = self.keys_to_keep if self.keys_to_keep is not None else list(range(self.length))
+        if self.length is not None:
+            self.keys_to_keep = self.keys_to_keep if self.keys_to_keep is not None else list(range(self.length))
         return self
 
     def torch_dataset(self):
@@ -185,6 +193,9 @@ class DreemDataset:
                     self.length = self.data[item].shape[0]
                 self.h5_datasets[item] = self.data[item]
 
+    def load_targets(self, filename):
+        self.targets = np.load(filename)
+
     def get_dataset(self, dataset_name, path=None):
         self.v_print("Loading dataset", dataset_name, "...")
         if path is not None:
@@ -193,9 +204,10 @@ class DreemDataset:
             dataset = self.h5_datasets[dataset_name]
             dataset = dataset[:][self.keys_to_keep]  # Only keep the keys_to_keep elements
             if dataset_name in self.transforms.keys():
-                self.v_print("Apply transformations...")
-                dataset = self.transforms[dataset_name](dataset, self.targets)
-                self.v_print("Applied.")
+                if not self.load_lazy:
+                    self.v_print("Apply transformations...")
+                    dataset = self.transforms[dataset_name](dataset, self.targets)
+                    self.v_print("Applied.")
             return dataset
 
     def load_data(self, path=None):
@@ -204,14 +216,11 @@ class DreemDataset:
         self.datasets = {}
         if self.targets is not None:
             self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
-        for dataset_name in self.h5_datasets.keys():
+        for dataset_name in self.keep_datasets:
             self.datasets[dataset_name] = self.get_dataset(dataset_name, path)
         if path is not None:
             self.load_targets(path + "/" + "targets.npy")
         self.v_print("Done.")
-
-    def load_targets(self, filename):
-        self.targets = np.load(filename)
 
     def save_data(self, path):
         self.v_print("Saving into", path, "...")
@@ -237,7 +246,10 @@ class DreemDataset:
         """
         Closes the dataset
         """
-        self.data.close()
+        if self.data is not None:
+            self.data.close()
+        for f in self.opened_files:
+            f.close()
 
     def __enter__(self):
         return self.init()
@@ -249,14 +261,17 @@ class DreemDataset:
         self.close()
 
     def __getitem__(self, item):
-        # item = item if self.keys_to_keep is None else self.keys_to_keep[item]
         data_50hz = []
         data_10hz = []
         if self.datasets is None:
             self.load_data()
         for dataset_name, dataset in self.datasets.items():
             data = dataset[item]
-            # data = data if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](data)
+            if self.load_lazy:
+                data = np.expand_dims(data, axis=0)
+                target = np.expand_dims(self.targets[item], axis=0)
+                data = data if dataset_name not in self.transforms.keys() else self.transforms[dataset_name](data, target)
+                data = data[0]
             if dataset_name in self.separation_50hz_10hz[0]:
                 data_50hz.append(data)
             else:

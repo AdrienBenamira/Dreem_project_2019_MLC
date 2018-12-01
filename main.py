@@ -6,6 +6,7 @@ from tools import show_curves
 from models import CNN, MLPClassifier, SimpleCNN
 from preprocessing import Compose, ExtractBands, ExtractFeatures, ExtractSpectrum
 import matplotlib.pyplot as plt
+from torchvision.models import resnet101
 
 # Training settings
 args = Parser().parse()

@@ -1,8 +1,9 @@
 from typing import List, Union
 import numpy as np
 from scipy.signal import iirfilter, sosfilt
+from mtspec import wigner_ville_spectrum
 
-__all__ = ["BandPass", "ExtractBands", "ExtractSpectrum"]
+__all__ = ["BandPass", "ExtractBands", "ExtractSpectrum", "WignerVilleSpectrum"]
 
 
 class ExtractBands:
@@ -40,12 +41,12 @@ class ExtractBands:
 
 
 class ExtractSpectrum:
-    def __init__(self, window, target, sampling_freq=50):
+    def __init__(self, window, sampling_freq=50):
         self.name = "extract_spectrum_with_window_" + str(window)
         self.sampling_freq = sampling_freq
         self.window = window
 
-    def __call__(self, signal):
+    def __call__(self, signal, target):
         """
         Args:
             signal: signal. Either one batch of signals of dimension 1500 (sampled at 50hz) or all bands for one batch
@@ -68,6 +69,37 @@ class ExtractSpectrum:
                 spectrum = abs(np.fft.fft(sub_signal) / self.sampling_freq)
                 d[b, i, :] = spectrum
         return d
+
+
+class WignerVilleSpectrum:
+    """
+    Use multitaper spectral estimation to compute wigner ville spectrum
+    """
+
+    def __init__(self, time_bandwidth, sampling_freq=50, smoothing_filter=None):
+        """
+        Args:
+            time_bandwidth: Time bandwidth product for the tapers
+            sampling_freq: sampling frequency
+            smoothing_filter: One of "boxcar", "gauss" or just None. See mtspec documentation for more details.
+                http://krischer.github.io/mtspec/multitaper_wigner_ville_spectrum.html#mtspec.multitaper.wigner_ville_spectrum
+        """
+        self.smoothing_filter = smoothing_filter
+        self.sampling_freq = sampling_freq
+        self.time_bandwidth = time_bandwidth
+
+    def __call__(self, signals, targets):
+        spectrum = self.spectrum(signals[0])
+        spectrums = np.zeros((signals.shape[0], spectrum.shape[0], spectrum.shape[1]))
+        spectrums[0, :, :] = spectrum
+        for k in range(1, signals.shape[0]):
+            spectrums[k, :, :] = self.spectrum(signals[k])
+        return spectrums
+
+    def spectrum(self, signal):
+        return np.log(abs(wigner_ville_spectrum(signal, delta=self.sampling_freq,
+                                                time_bandwidth=self.time_bandwidth,
+                                                smoothing_filter=self.smoothing_filter))) + 1
 
 
 class BandPass:
