@@ -206,7 +206,7 @@ class DreemDataset:
             self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         for dataset_name in self.h5_datasets.keys():
             self.datasets[dataset_name] = self.get_dataset(dataset_name, path)
-        if path is not None:
+        if path is not None and self.targets is not None:
             self.load_targets(path + "/" + "targets.npy")
         self.v_print("Done.")
 
@@ -217,11 +217,13 @@ class DreemDataset:
         self.v_print("Saving into", path, "...")
         if not os.path.exists(path):
             os.makedirs(path)
-        self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
+        if self.targets is not None:
+            self.targets = np.array([self.targets[i] for i in self.keys_to_keep])
         for dataset_name in self.h5_datasets.keys():
             dataset = self.get_dataset(dataset_name)  # Force not loading from path
             np.save(path + "/" + dataset_name + ".npy", dataset)
-        self.save_targets(path + "/" + "targets.npy")
+        if self.targets is not None:
+            self.save_targets(path + "/" + "targets.npy")
         self.v_print("Saved.")
 
     def save_targets(self, filename):

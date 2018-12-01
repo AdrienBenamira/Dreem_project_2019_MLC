@@ -45,7 +45,7 @@ class ExtractFeatures:
              signals of dimension (batch_size x number_bands x 1500)
         """
         if self.extract_bands is not None:
-            signal = self.extract_bands(signal)
+            signal = self.extract_bands(signal, target)
         features = None
         if len(signal.shape) == 2:
             features = self.get_features(signal, None)
