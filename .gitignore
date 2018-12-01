@@ -10,4 +10,5 @@ documentation/
 __pycache__/
 .ipynb*
 *.npy
+*.csv
 
