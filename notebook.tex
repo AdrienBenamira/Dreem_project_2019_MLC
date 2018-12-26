@@ -1,0 +1,986 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{Rapport - part1}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \section{Machine Learning and
+Classification}\label{machine-learning-and-classification}
+
+\subsection{Rapport du projet}\label{rapport-du-projet}
+
+\emph{Par BENAMIRA Adrien, CARRIE Hanaé et DEVILLERS Benjamin}
+
+\subsection{PLAN :}\label{plan}
+
+XXX
+
+    \subsection{1. Introduction}\label{introduction}
+
+    Ce projet a pour but de proposer d'utiliser les données du bandeau de
+Dreem pour évaluer le stade de sommeil sur des périodes de 30 secondes
+de signaux biophysiologiques.
+
+Le sommeil joue un rôle vital dans la santé et le bien-être d'une
+personne. Le sommeil progresse selon des cycles qui impliquent plusieurs
+stades de sommeil : réveil, sommeil léger, sommeil profond, sommeil
+paradoxal et à chaque stades du sommeil sont associés différentes
+fonctions physiologiques. Déterminer ce stade est indispensable pour
+diagnostiquer les troubles du sommeil. Aujourd'hui, les études
+polysomnographiques sont menées dans un hôpital ou dans un laboratoire
+du sommeil etde multiples signaux physiologiques sont enregistrés comme
+l'électroencéphalogramme, l'électrocardiogramme, etc. L'évaluation de
+l'étape du sommeil est ensuite effectué visuellement par un expert sur
+les époques de 30 secondes d'enregistrement des signaux. Le graphique
+qui en résulte est appelé hypnogramme.
+
+Le bandeau Dreem permet de faire de la polysomnographie à domicile grâce
+à trois types de capteurs : électroencéphalogramme (EEG), pouls et
+signaux accélérométriques. Les données mesurées par Dreem ont été
+labélisés par un expert en sommeil qualifié.
+
+Le but de cet compétition Kaggle est de développer un algorithme pour
+classifier les phases de sommeil Wake, N1, N2, N3 et REM sur des
+fenêtres de 30 secondes de données brutes. Elles comprennent 7 canaux
+eegs en position frontale et occipitale, 1 canal infrarouge d'oxymètre
+de pouls et 3 canaux accéléromètres (x, y et z).
+
+    \subsection{2. Chargement des données et
+pré-traitements}\label{chargement-des-donnuxe9es-et-pruxe9-traitements}
+
+    \subsubsection{2.1. Chargement des
+données}\label{chargement-des-donnuxe9es}
+
+Les données sont sauvegardée au format HDF5. Ce format est
+particulièrement intéressant car il permet de stocker des lourdes
+données compréssées en un dataset. La bibliothèque Python \texttt{h5py}
+permet de pouvoir les lire ces données facilement de la même manière que
+nous utiliserions un tableau \texttt{Numpy}.
+
+La class python \texttt{DreemDataset} dans le package
+\texttt{tools.data} permet de récupérer et manipuler les datasets. Comme
+nous voulons effectuer des prétraitements sur nos données et les stocker
+pour pouvoir rapidement appliquer les algorithmes d'apprentissage sur
+nos données traitées, nous avons conçu cette classe de sorte que nous
+puissions appliquer puis sauvegarder.
+
+Nous avons choisis de les sauvegarder ensuite dans des tableaux
+\texttt{npy} pour des questions de performances d'execution.
+
+La classe python \texttt{DreemDatasets} permet quant à elle de générer
+un "dev set" et "train set" à partir des données. Celle-ci retourne un
+couple d'instance de \texttt{DreemDataset}. Puis que les différentes
+classes ne sont pas équilibrées, nous pouvons également ne récupérer
+qu'un sous-ensemble du dataset équilibré.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{data} \PY{k}{import} \PY{n}{DreemDatasets}
+\end{Verbatim}
+
+
+    Les paramètres sont :
+
+\begin{itemize}
+\tightlist
+\item
+  chemin vers les données
+\item
+  chemin vers les cibles
+\item
+  \texttt{keep\_datasets} Liste des datasets à garder, parmi les
+  suivants :
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{eeg\_1} - EEG in frontal position sampled at 50 Hz
+    -\textgreater{} 1500 values
+  \item
+    \texttt{eeg\_2} - EEG in frontal position sampled at 50 Hz
+    -\textgreater{} 1500 values
+  \item
+    \texttt{eeg\_3} - EEG in frontal position sampled at 50 Hz
+    -\textgreater{} 1500 values
+  \item
+    \texttt{eeg\_4} - EEG in frontal-occipital position sampled at 50 Hz
+    -\textgreater{} 1500 values
+  \item
+    \texttt{eeg\_5} - EEG in frontal-occipital position sampled at 50 Hz
+    -\textgreater{} 1500 values
+  \item
+    \texttt{eeg\_6} - EEG in frontal-occipital position sampled at 50 Hz
+    -\textgreater{} 1500 values
+  \item
+    \texttt{eeg\_7} - EEG in frontal-occipital position sampled at 50 Hz
+    -\textgreater{} 1500 values
+  \item
+    \texttt{accelerometer\_x} - Accelerometer along x axis sampled at 10
+    Hz -\textgreater{} 300 values
+  \item
+    \texttt{accelerometer\_y} - Accelerometer along y axis sampled at 10
+    Hz -\textgreater{} 300 values
+  \item
+    \texttt{accelerometer\_z} - Accelerometer along z axis sampled at 10
+    Hz -\textgreater{} 300 values
+  \item
+    \texttt{pulse\_oximeter\_infrared} - Pulse oximeter infrared channel
+    sampled at 10 Hz -\textgreater{} 300 values
+  \end{itemize}
+\item
+  \texttt{split\_train\_val} Pourcentage pour partager le train set et
+  validation set
+\item
+  \texttt{seed} Une seed pour la reproductibilité
+\item
+  \texttt{balance\_data} si vrai, équilibre le dataset pour avoir le
+  nombre de donnée par classe
+\item
+  \texttt{size} Une taille maximale pour le dataset (si non renseignée,
+  tout le dataset)
+\item
+  \texttt{transforms} des transformations à appliquer aux données (voir
+  la partie transformation)
+\item
+  \texttt{transforms\_val} si renseignée, \texttt{transforms} sera pour
+  le train et \texttt{transforms\_val} pour la validation. Sinon, même
+  transformation que \texttt{transforms}.
+\end{itemize}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                           \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} 
+                                           \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} 
+                                           \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
+        
+        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Load les données en mémoire}
+        
+        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} Ne pas oublier de fermer les datasets}
+        \PY{c+c1}{\PYZsh{} Ne ferme que les fichiers h5. Si .load\PYZus{}data() a été appelé, on a toujours accès aux données !}
+        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Loading data in memory{\ldots}
+5412 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Done.
+Loading data in memory{\ldots}
+1353 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Done.
+
+    \end{Verbatim}
+
+    \paragraph{2.1.1. Récupération des
+données}\label{ruxe9cupuxe9ration-des-donnuxe9es}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}7}]:} \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{target} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}  \PY{c+c1}{\PYZsh{} Une valeur}
+        
+        \PY{c+c1}{\PYZsh{} Dimension nb\PYZus{}datasets x tailles\PYZus{}features}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+        
+        \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{targets} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}  \PY{c+c1}{\PYZsh{} 10 valeurs}
+        \PY{c+c1}{\PYZsh{} Dimension nb\PYZus{}datasets x nb\PYZus{}elements (=10) x tailles\PYZus{}features}
+        
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+(1, 1500)
+(1, 10, 1500)
+
+    \end{Verbatim}
+
+    \paragraph{2.1.2. Enregistrer un dataset}\label{enregistrer-un-dataset}
+
+On peut utiliser la méthode \texttt{save\_data} pour enregistrer dans un
+\texttt{.npy}. Pour des questions de mémoire, il y aura un fichier par
+dataset (ex, si on choisit d'ouvrir \texttt{{[}"eeg\_1",\ "eeg\_2"{]}}
+alors il y aura deux fichiers).
+
+Attention, le nom des fichiers ne peut pas être précisé, seulement un
+dossier parent.
+
+Par exemple, avec le \texttt{save\_data("dataset/test")}, on aura les
+fichiers : - \texttt{dataset/test/eeg\_1.npy} -
+\texttt{dataset/test/eeg\_2.npy}
+
+On peut préciser le chemin vers un nouveau dossier, celui-ci sera créé.
+
+La sauvegarde enregistre les données \textbf{transformée}. Les données
+brutes ne sont pas enregistrées.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                           \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
+        
+        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{save\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Attention, pas de / à la fin !}
+        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{save\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/val}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        
+        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Saving into dataset/sauvegarde/train {\ldots}
+Loading dataset eeg\_1 {\ldots}
+Saved.
+Saving into dataset/sauvegarde/val {\ldots}
+Loading dataset eeg\_1 {\ldots}
+Saved.
+
+    \end{Verbatim}
+
+    Si l'on a déjà enregistré le dataset, on peut utiliser
+\texttt{load\_data} en précisant le dossier dans lequel sont tous les
+fichiers
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} Cela remplace les données données des fichiers h5.}
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Attention, pas de / à la fin !}
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/val}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{target} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Loading data in memory{\ldots}
+5412 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Done.
+Loading data in memory{\ldots}
+1353 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Done.
+(1, 1500)
+
+    \end{Verbatim}
+
+    \paragraph{2.1.3. Test set}\label{test-set}
+
+On peut faire la même chose avec le test set qu'avec les autres données.
+
+Attention à bien appeler \texttt{init()}.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:} \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{data} \PY{k}{import} \PY{n}{DreemDataset}
+         
+         \PY{n}{test\PYZus{}set} \PY{o}{=} \PY{n}{DreemDataset}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/test.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{init}\PY{p}{(}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} Rappel : charge en mémoire. On peut également charget un fichier en précisant un chemin}
+         \PY{n}{test\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}  
+         
+         \PY{n}{test\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Loading data in memory{\ldots}
+37439 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Done.
+
+    \end{Verbatim}
+
+    \subsubsection{2.2. Pré-traitements}\label{pruxe9-traitements}
+
+\paragraph{2.2.1. Introduction :
+Transformations}\label{introduction-transformations}
+
+Une transformation est ce qui nous permet de faire nos pré-traitements
+sur nos données. Pour effectuer des transformations sur nos données,
+nous devons definir un dictionnaire :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}4}]:} \PY{k}{def} \PY{n+nf}{transformation\PYZus{}eeg\PYZus{}1}\PY{p}{(}\PY{n}{batch\PYZus{}signals}\PY{p}{,} \PY{n}{batch\PYZus{}targets}\PY{p}{)}\PY{p}{:}
+            \PY{k}{return} \PY{n}{batch\PYZus{}signals}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}
+        
+        \PY{n}{transformations} \PY{o}{=} \PY{p}{\PYZob{}}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{eeg\PYZus{}1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{transformation\PYZus{}eeg\PYZus{}1}
+        \PY{p}{\PYZcb{}}
+\end{Verbatim}
+
+
+    Prenant en clé le nom du dataset sur lequel effectuer la transformation
+et en valeur une fonction prenant 2 paramètres :
+
+\begin{itemize}
+\tightlist
+\item
+  un batch du signal de taille (batch, taille\_signal)
+\item
+  les "targets" qui correspondent aux classes de sommeils que nous
+  devons prédire pour le batch en question.
+\end{itemize}
+
+Ces deux paramètres peuvent être utiles pour nos différentes fonctions
+de pré-processing.
+
+La transformation doit retourner le batch modifié.
+
+Dans l'exemple ci-dessus, nous appliquerons une transformation au
+dataset \texttt{eeg\_1} qui tranformera les signaux en seulement la
+première valeur du signal.
+
+    \paragraph{2.2.2. Extraction en bandes}\label{extraction-en-bandes}
+
+D'après
+{[}\href{http://www.fmed.edu.uy/sites/www.labsueno.fmed.edu.uy/files/9.Diagnostico-polisomnogr\%C3\%A1fico.pdf}{1:
+Malhotra, R. K., \& Avidan, A. Y. (2014). Sleep stages and scoring
+technique. Atlas of Sleep Medicine, 77-99.}{]} et
+{[}\href{https://www.mdpi.com/1099-4300/18/9/272}{2: Aboalayon, K.,
+Faezipour, M., Almuhammadi, W., \& Moslehpour, S. (2016). Sleep stage
+classification using EEG signal analysis: a comprehensive survey and new
+investigation. Entropy, 18(9), 272.}{]}, les électroencéphalogrames
+(eegs) peuvent être séparés en bande de fréquences contenant différentes
+informations :
+
+\begin{itemize}
+\tightlist
+\item
+  Bande \(\delta\) : de 0 à 4 Hz,
+\item
+  bande \(\theta\) : de 4 à 8 Hz,
+\item
+  bande \(\alpha\) : de 8 à 13 Hz,
+\item
+  bande \(\beta\) : de 13 à 38 Hz,
+\item
+  bande \(\gamma\) : de 38 à 42 Hz.
+\end{itemize}
+
+Cependant nos eegs sont échantillonés à 50 Hz. Le thèorème de Shannon
+(Sampling theorem) indique que nous ne pourrons récupérer que des
+informations sur une bande de fréquence entre 0 et 25 Hz.
+
+Nous ne considerons donc pour cela pas la bande \(\gamma\) et gardon la
+bande \(\beta\) que de 13 à 22 Hz.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}13}]:} \PY{k+kn}{from} \PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{signals} \PY{k}{import} \PY{n}{ExtractBands}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}14}]:} \PY{n}{extract\PYZus{}bands} \PY{o}{=} \PY{n}{ExtractBands}\PY{p}{(}\PY{n}{bands}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} toutes les bandes (de delta à beta)}
+\end{Verbatim}
+
+
+    \texttt{extract\_bands} est une transformation que nous pouvons
+appliquer aux eegs et qui sort des signaux extraits en bande :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}16}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} 
+                                            \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} 
+                                            \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                                            \PY{n}{transforms}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{eeg\PYZus{}1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{extract\PYZus{}bands}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Load les données en mémoire}
+         
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} Ne pas oublier de fermer les datasets}
+         \PY{c+c1}{\PYZsh{} Ne ferme que les fichiers h5. Si .load\PYZus{}data() a été appelé, on a toujours accès aux données !}
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{target} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Loading data in memory{\ldots}
+5412 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Apply transformations{\ldots}
+Applied.
+Done.
+Loading data in memory{\ldots}
+1353 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Apply transformations{\ldots}
+Applied.
+Done.
+(1, 4, 1500)
+
+    \end{Verbatim}
+
+    Noter la dimension "4" ajoutée qui correspond aux 4 bandes de fréquence.
+
+    \paragraph{2.2.3. Features plus
+avancées}\label{features-plus-avancuxe9es}
+
+    Nous avons ensuite ajouté différents pré-traitements de base sur nos
+features tel que :
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{min} valeur min du signal,
+\item
+  \texttt{max} valeur max du signal,
+\item
+  \texttt{frequency} fréquence du signal,
+\item
+  \texttt{energy} énergie du signal.
+\end{itemize}
+
+Puis nous avons essayé les features proposés par
+{[}\href{https://www.mdpi.com/1099-4300/18/9/272}{2}{]} : * \texttt{mmd}
+distance minimum-maximum * \texttt{esis} correspond à l'énergie et
+"vitesse" du signal
+
+De plus, comme expliqué par
+{[}\href{http://www.fmed.edu.uy/sites/www.labsueno.fmed.edu.uy/files/9.Diagnostico-polisomnogr\%C3\%A1fico.pdf}{1}{]},
+section "\emph{Stages of Sleep}", nous pouvons distinguer différentes
+étapes du sommeil par différentes prédominances "d'utilisation" d'une
+bande : * \texttt{band-usage} est la feature qui indique, sur une
+fenêtre glissante, la bande qui est a la plus grande valeur sur la
+fenêtre parmi toutes les bandes. Cela donne une indication de la bande
+prédominante sur la fenêtre.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}18}]:} \PY{c+c1}{\PYZsh{} Transformation pour ces featyres}
+         \PY{k+kn}{from} \PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{features} \PY{k}{import} \PY{n}{ExtractFeatures}
+         
+         \PY{c+c1}{\PYZsh{} Extract features peut directement extraire les bandes}
+         \PY{n}{extract\PYZus{}features} \PY{o}{=} \PY{n}{ExtractFeatures}\PY{p}{(}\PY{n}{bands}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{features}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mmd}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{esis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}27}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} 
+                                            \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} 
+                                            \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                                            \PY{n}{transforms}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{eeg\PYZus{}1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{extract\PYZus{}features}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Load les données en mémoire}
+         
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} Ne pas oublier de fermer les datasets}
+         \PY{c+c1}{\PYZsh{} Ne ferme que les fichiers h5. Si .load\PYZus{}data() a été appelé, on a toujours accès aux données !}
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{target} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{p}{:}\PY{p}{]}
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Loading data in memory{\ldots}
+5412 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Apply transformations{\ldots}
+Applied.
+Done.
+Loading data in memory{\ldots}
+1353 in 1 datasets to load
+Loading dataset eeg\_1 {\ldots}
+Apply transformations{\ldots}
+Applied.
+Done.
+(1, 4, 5412, 2)
+
+    \end{Verbatim}
+
+    On voit ici que la dimension est de 1 (=1 dataset) x 4 (=4 bandes) x
+nombre de signaux x 2 (=2 features).
+
+    \subsubsection{2.3. Etat de l'art : Caractéristiques temporelles et
+spectrales à grande
+échelle}\label{etat-de-lart-caractuxe9ristiques-temporelles-et-spectrales-uxe0-grande-uxe9chelle}
+
+    La classification multi-classes précise, rapide et fiable de signaux
+d'électroencéphalographie (EEG) est un défi pour le développement de
+systèmes d'interface cerveau-ordinateur (MI-BCI) d'imagerie motrice.
+C'est un domaine assez actif, comme le montre les différentes concours
+tel que \href{http://bnci-horizon-2020.eu/database/data-sets}{le
+concours BCI Competition IV C. Brunner et al.}
+
+Après un état de l'art efficace, plusieurs approches auraient pu etre
+envisagé :
+
+A commencé par une approche monodirectionelle concentré sur les EEGS : à
+partir d'une seule courbe de l'un des EEG de 30secondes déterminé sa
+classe et répété l'opération pour les 7 courbes (reférence :
+\href{https://ieeexplore.ieee.org/document/7362882}{S. Sakhav and al.}
+). Ou bien une approche multidirectionnelle concentré sur l'extraction
+de caractéristique qui maximisent la discriminabilité entre deux
+classes.
+
+Nous nous sommes attaché à exploré la seconde voie et il semblerait que
+la méthode la plus efficace soit celle propsosé par
+\href{https://arxiv.org/abs/1806.06823}{Hersche et al.}
+
+L'idée est d'utiliser le modèle spatial commun (CSP) et celui avec la
+géométrie de Riemannian pour l'étendre aux cas de multifenêtrage
+temporelle et spectrale.
+
+    \paragraph{2.3.1 Filter Bank Common Spatial Pattern
+(FBCSP)}\label{filter-bank-common-spatial-pattern-fbcsp}
+
+    L'algorithme des modèles spatiaux communs (CSP) apprend des filtres
+spatiaux qui maximisent la discriminabilité entre deux classes
+(\href{https://ieeexplore.ieee.org/document/5593210}{F. Lotte and al.}).
+Ses performances dépendent fortement des bandes de fréquences
+opérationnelles considérées. Ainsi, dans la plupart des applications,
+les données sont d'abord divisées en plusieurs bandes de fréquences,
+puis spatialement filtrées. C'est ce que l'on appelle la configuration
+spatiale commune des bancs de filtres.
+
+Dans notre cas nous utiliserons les paramètres suivants :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}5}]:} \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{filters} \PY{k}{import} \PY{n}{load\PYZus{}filterbank}
+        \PY{k+kn}{from} \PY{n+nn}{IPython}\PY{n+nn}{.}\PY{n+nn}{display} \PY{k}{import} \PY{n}{Image}
+        \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{csp} \PY{k}{import} \PY{n}{generate\PYZus{}projection}\PY{p}{,} \PY{n}{generate\PYZus{}eye}\PY{p}{,} \PY{n}{extract\PYZus{}feature}
+        \PY{k+kn}{from} \PY{n+nn}{preprocessing} \PY{k}{import} \PY{n}{Compose}\PY{p}{,} \PY{n}{ExtractBands}\PY{p}{,} \PY{n}{ExtractSpectrum}
+        
+        \PY{n}{fs} \PY{o}{=} \PY{l+m+mf}{50.}  \PY{c+c1}{\PYZsh{} sampling frequency}
+        \PY{n}{NO\PYZus{}channels} \PY{o}{=} \PY{l+m+mi}{7}  \PY{c+c1}{\PYZsh{} number of EEG channels}
+        \PY{n}{NO\PYZus{}riem} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{NO\PYZus{}channels} \PY{o}{*} \PY{n}{NO\PYZus{}channels} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{/} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} Total number of CSP feature per band and timewindow}
+        \PY{n}{bw} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{13}\PY{p}{,} \PY{l+m+mi}{22}\PY{p}{]}\PY{p}{)}
+        \PY{n}{ftype} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{butter}\PY{l+s+s1}{\PYZsq{}}  \PY{c+c1}{\PYZsh{} \PYZsq{}fir\PYZsq{}, \PYZsq{}butter\PYZsq{}}
+        \PY{n}{forder} \PY{o}{=} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} 4}
+        \PY{n}{filter\PYZus{}bank} \PY{o}{=} \PY{n}{load\PYZus{}filterbank}\PY{p}{(}\PY{n}{bw}\PY{p}{,} \PY{n}{fs}\PY{p}{,} \PY{n}{order}\PY{o}{=}\PY{n}{forder}\PY{p}{,} \PY{n}{max\PYZus{}freq}\PY{o}{=}\PY{l+m+mi}{23}\PY{p}{,} \PY{n}{ftype}\PY{o}{=}\PY{n}{ftype}\PY{p}{)}  \PY{c+c1}{\PYZsh{} get filterbank coeffs}
+        \PY{n}{time\PYZus{}windows\PYZus{}flt} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{30}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{30}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{]}\PY{p}{,}
+                                     \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{]}
+        \PY{p}{]}\PY{p}{)} \PY{o}{*} \PY{n}{fs}
+        \PY{n}{time\PYZus{}windows} \PY{o}{=} \PY{n}{time\PYZus{}windows\PYZus{}flt}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
+        \PY{n}{NO\PYZus{}bands} \PY{o}{=} \PY{n}{filter\PYZus{}bank}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+        \PY{n}{NO\PYZus{}csp} \PY{o}{=} \PY{l+m+mi}{24}  \PY{c+c1}{\PYZsh{} Total number of CSP feature per band and timewindow}
+        \PY{n}{useCSP} \PY{o}{=} \PY{k+kc}{False}
+        
+        \PY{n}{Image}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{fig1.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+\texttt{\color{outcolor}Out[{\color{outcolor}5}]:}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_34_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    Cette figure est extraite de
+\href{https://arxiv.org/abs/1806.06823}{Hersche et al.} Pour nous, le
+temps varie de 0 à 30 secondes et la fréquence de 2 à 22 Herts. Le code
+pour appliquer ce préprocess est le suivant :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} \PY{k}{def} \PY{n+nf}{get\PYZus{}features}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{label}\PY{p}{,} \PY{n}{time\PYZus{}windows}\PY{p}{,} \PY{n}{useCSP} \PY{o}{=} \PY{k+kc}{True}\PY{p}{)}\PY{p}{:}
+            \PY{k}{if} \PY{n}{useCSP}\PY{p}{:}
+                \PY{n}{w} \PY{o}{=} \PY{n}{generate\PYZus{}projection}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{label}\PY{p}{,} \PY{n}{NO\PYZus{}csp}\PY{p}{,} \PY{n}{filter\PYZus{}bank}\PY{p}{,} \PY{n}{time\PYZus{}windows}\PY{p}{,} \PY{n}{NO\PYZus{}classes}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{)}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{w} \PY{o}{=} \PY{n}{generate\PYZus{}eye}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{label}\PY{p}{,} \PY{n}{filter\PYZus{}bank}\PY{p}{,} \PY{n}{time\PYZus{}windows}\PY{p}{)}
+            \PY{n}{feature\PYZus{}mat} \PY{o}{=} \PY{n}{extract\PYZus{}feature}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{w}\PY{p}{,} \PY{n}{filter\PYZus{}bank}\PY{p}{,} \PY{n}{time\PYZus{}windows}\PY{p}{)}
+            \PY{k}{return}\PY{p}{(}\PY{n}{w}\PY{p}{,} \PY{n}{feature\PYZus{}mat}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}w, train\PYZus{}feat\PYZus{}CSP = get\PYZus{}features(train\PYZus{}data, train\PYZus{}label, time\PYZus{}windows, useCSP)}
+        \PY{c+c1}{\PYZsh{}test\PYZus{}feature\PYZus{}CSP = extract\PYZus{}feature(test\PYZus{}data, w, filter\PYZus{}bank, time\PYZus{}windows)}
+\end{Verbatim}
+
+
+    \paragraph{2.3.2 Riemannian covariance
+features}\label{riemannian-covariance-features}
+
+    Nous n'irons pas dans les détails puisque nous l'avons implémenté et
+essayé mais ces caractéristiques donnent de (légers) moins bons
+résultats que les CSP features. Vous pourrez vous refairez au paragraphe
+4 de la publication \href{https://arxiv.org/abs/1806.06823}{Hersche et
+al.} pour plus de détails.
+
+Voici toutefois le code à déployer pour utiliser ces features :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{k+kn}{from} \PY{n+nn}{models}\PY{n+nn}{.}\PY{n+nn}{riemannian\PYZus{}multiscale} \PY{k}{import} \PY{n}{riemannian\PYZus{}multiscale}
+        \PY{n}{riemann} \PY{o}{=} \PY{n}{riemannian\PYZus{}multiscale}\PY{p}{(}\PY{n}{filter\PYZus{}bank}\PY{p}{,} \PY{n}{time\PYZus{}windows}\PY{p}{,} \PY{n}{riem\PYZus{}opt}\PY{o}{=}\PY{n}{riem\PYZus{}opt}\PY{p}{,} \PY{n}{rho}\PY{o}{=}\PY{n}{rho}\PY{p}{,} \PY{n}{vectorized}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+        \PY{n}{features\PYZus{}CSP\PYZus{}train\PYZus{}R} \PY{o}{=} \PY{n}{riemann}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{train\PYZus{}data}\PY{p}{)}
+        \PY{n}{features\PYZus{}CSP\PYZus{}test\PYZus{}R} \PY{o}{=} \PY{n}{riemann}\PY{o}{.}\PY{n}{features}\PY{p}{(}\PY{n}{test\PYZus{}data}\PY{p}{)}
+\end{Verbatim}
+
+
+    \subsubsection{2.4.3 Comparaison de toutes les
+features}\label{comparaison-de-toutes-les-features}
+
+    Notre base de données est déséquilibré :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{n}{XXX}
+\end{Verbatim}
+
+
+    Nous avons donc tester toutes nos features sur deux approches : un
+subdataset équilibré et sur tout le dataset. Pour chaque test nous
+utilisons la même méthode de classification :
+
+clf = RandomForestClassifier(n\_estimators=700,max\_features='auto',
+random\_state=0)
+
+Nous obtenons les résultats suivant (cf All\_features\_method.ipynb et
+All\_features\_method\_balanced.ipynb) :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}23}]:} \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+         
+         \PY{n}{df\PYZus{}all} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Différents models sur tout le dataset}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on pulse et accelerometre}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on eegs}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                  \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on all}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on all + Riemann}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on all + CSP}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} 
+          \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{F1\PYZhy{}score val}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{0.518054836809841}\PY{p}{,} \PY{l+m+mf}{0.5632674016257432}\PY{p}{,} \PY{l+m+mf}{0.5893988863012602}\PY{p}{,} \PY{l+m+mf}{0.6046064049161487}\PY{p}{,} \PY{l+m+mf}{0.6178183804270211}\PY{p}{]}\PY{p}{,} 
+          \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Time}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{p}{[}\PY{l+m+mi}{193}\PY{p}{,}\PY{l+m+mi}{308}\PY{p}{,}\PY{l+m+mi}{408}\PY{p}{,} \PY{l+m+mi}{2500}\PY{p}{,} \PY{l+m+mi}{3000}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+         
+         \PY{n}{df\PYZus{}all}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}23}]:}                Différents models sur tout le dataset  F1-score val  Time
+         0  Min - max - freq - energy on pulse et accelero{\ldots}      0.518055   193
+         1                  Min - max - freq - energy on eegs      0.563267   308
+         2                   Min - max - freq - energy on all      0.589399   408
+         3         Min - max - freq - energy on all + Riemann      0.604606  2500
+         4             Min - max - freq - energy on all + CSP      0.617818  3000
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}28}]:} \PY{n}{df\PYZus{}balanced} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Différents models sur un subdataset balanced}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on pulse et accelerometre}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                                                                                    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on eegs}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                                                                                    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on all}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                                                                                    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on all + Riemann}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                                                                                    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ Min \PYZhy{} max \PYZhy{} freq \PYZhy{} energy on all + CSP}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} 
+          \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{F1\PYZhy{}score val}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{0.5638819160728847}\PY{p}{,} \PY{l+m+mf}{0.6254347640147918}\PY{p}{,} \PY{l+m+mf}{0.6397347891229647}\PY{p}{,} \PY{l+m+mf}{0.6397853700614984}\PY{p}{,} \PY{l+m+mf}{0.639209140962282}\PY{p}{]}\PY{p}{,} 
+          \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Time}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{p}{[}\PY{l+m+mi}{150}\PY{p}{,}\PY{l+m+mi}{300}\PY{p}{,} \PY{l+m+mi}{400}\PY{p}{,} \PY{l+m+mi}{2000}\PY{p}{,} \PY{l+m+mi}{2500}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+         
+         \PY{n}{df\PYZus{}balanced}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}28}]:}         Différents models sur un subdataset balanced  F1-score val  Time
+         0  Min - max - freq - energy on pulse et accelero{\ldots}      0.563882   150
+         1                  Min - max - freq - energy on eegs      0.625435   300
+         2                   Min - max - freq - energy on all      0.639735   400
+         3         Min - max - freq - energy on all + Riemann      0.639785  2000
+         4             Min - max - freq - energy on all + CSP      0.639209  2500
+\end{Verbatim}
+            
+    Malgré de meilleurs résultats pour le F1-score pour le balanced dataset
+(ATTENTION c'est bien le même validation set pour les 2 expériences !),
+nous obtenons de biens moins bons scores sur le Kaggle (environ 59\%)
+contre 64.22\% pour le all dataset avec la meilleure configuration. On
+en déduit que le test set doit être très proche du tran set
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}
