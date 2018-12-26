@@ -47,7 +47,12 @@ class GenericTrainer:
         if self.classifier is not None:
             self.classifier.train()
         with tqdm(total=len(self.train_loader.dataset) / self.train_loader.batch_size) as t:
-            for batch_id, (data_50hz, data_10hz, target) in enumerate(self.train_loader):
+            for batch_id, data in enumerate(self.train_loader):
+                if len(data) == 3:
+                    data_50hz, data_10hz, target = data
+                if len(data) == 2:
+                    data_50hz, target = data
+                    data_10hz = torch.Tensor([0])
                 if use_cuda:
                     data_50hz, data_10hz, target = data_50hz.cuda(), data_10hz.cuda(), target.cuda()
                 self.optimizer.zero_grad()
@@ -72,7 +77,12 @@ class GenericTrainer:
         correct = 0
         batch_size = None
         with tqdm(total=len(self.val_loader.dataset) / self.val_loader.batch_size) as t:
-            for batch_id, (data_50hz, data_10hz, target) in enumerate(self.val_loader):
+            for batch_id, data in enumerate(self.val_loader):
+                if len(data) == 3:
+                    data_50hz, data_10hz, target = data
+                if len(data) == 2:
+                    data_50hz, target = data
+                    data_10hz = torch.Tensor([0])
                 if batch_size is None:
                     batch_size = target.size(0)
                 if use_cuda:
@@ -126,7 +136,8 @@ class CNNTrainer(GenericTrainer):
         if self.model_10hz is not None:
             out_10hz = self.model_10hz(data_10hz)
             out = torch.cat((out, out_10hz), dim=-1)
-        out = self.classifier(out)
+        if self.classifier is not None:
+            out = self.classifier(out)
         criterion = torch.nn.CrossEntropyLoss(reduction='elementwise_mean')
         loss = criterion(out, target)
         return loss, out

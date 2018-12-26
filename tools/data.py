@@ -8,7 +8,7 @@ import torch
 import pandas as pd
 from typing import List, Tuple
 from tqdm import tqdm
-from torchvision.models import vgg11
+from torchvision.models import resnet101
 
 __all__ = ['DreemDataset', 'DreemDatasets']
 
@@ -281,7 +281,7 @@ class DreemDataset:
         data_50hz = np.array(data_50hz)
         data_10hz = np.array(data_10hz)
         targets = self.targets[item]
-        if not data_10hz:
+        if data_10hz.shape == (0,):
             data_10hz = np.array([[0]])
         if self.as_torch_dataset:
             data_50hz = torch.tensor(data_50hz)
