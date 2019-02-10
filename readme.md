@@ -43,14 +43,15 @@ Différents models | F1-score val sur tout le dataset | Temps d'exécution (s) |
  |Min - max - freq - energy on all + Riemann|0.604606 |2500 |0.639785 |2000 |
  |Min - max - freq - energy on all + CSP |0.617818 |3000 |0.639209 |3000 |
 
- ## Further work :
+ ## Further perspectives :
 
  * A good Idea would be to a convnet architecture on the Riemann or CSP features to finish the classification
  instead of LGBM method
  * Dindin Meryll has done a really impressive work on this problematic. He achieved to have a 70.7 % accuracy.
  He explains his work in [this blog](https://towardsdatascience.com/my-sweet-dreams-about-automatic-sleep-stage-classification-414128441728?fbclid=IwAR0ROZvlMFr1NY2wmtF-xqlOrpYbbxgUFXo_iILtnQLuhfP6ACM2xIlZFrA).
 
-  * A recent paper : XXX can also be a very good start for an inference approach.
+  * The interesting [BagNet paper](https://openreview.net/forum?id=SkfMWhAqYQ) (accepted at ICLR 2019)
+  can also be a very good start for an inference approach.
 
 
 
