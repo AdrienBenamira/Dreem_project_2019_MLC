@@ -36,7 +36,7 @@ Report is available [here](https://github.com/AdrienBenamira/Dreem_project_2019_
 ## Feature Comparison :
 
 Différents models | F1-score val sur tout le dataset | Temps d'exécution (s) |F1-score val sur un subdataset balanced | Temps d'exécution (s) |
- |————————-|————-|—————|————-|—————|
+| ------------- |:-------------:| -----:|------------- |:-------------:|
  |Min - max - freq - energy on pulse et accelerometre|0.518055 |200 |0.563882 |150 |
  |Min - max - freq - energy on eegs |0.563267 |300 |0.625435 |300 |
  |Min - max - freq - energy on all|0.589399 |400 |0.639735 |400 |
@@ -45,13 +45,12 @@ Différents models | F1-score val sur tout le dataset | Temps d'exécution (s) |
 
  ## Further work :
 
- Markup : * A good Idea would be to a convnet architecture on the Riemann or CSP features to finish the classification
+ * A good Idea would be to a convnet architecture on the Riemann or CSP features to finish the classification
  instead of LGBM method
+ * Dindin Meryll has done a really impressive work on this problematic. He achieved to have a 70.7 % accuracy.
+ He explains his work in [this blog](https://towardsdatascience.com/my-sweet-dreams-about-automatic-sleep-stage-classification-414128441728?fbclid=IwAR0ROZvlMFr1NY2wmtF-xqlOrpYbbxgUFXo_iILtnQLuhfP6ACM2xIlZFrA).
 
-          * Dindin Meryll has done a really impressive work on this problematic. He achieved to have a 70.7 % accuracy.
-            He explains his work in [this blog](https://towardsdatascience.com/my-sweet-dreams-about-automatic-sleep-stage-classification-414128441728?fbclid=IwAR0ROZvlMFr1NY2wmtF-xqlOrpYbbxgUFXo_iILtnQLuhfP6ACM2xIlZFrA).
-
-          * A recent paper : XXX can also be a very good start for an inference approach.
+  * A recent paper : XXX can also be a very good start for an inference approach.
 
 
 
