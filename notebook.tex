@@ -280,16 +280,20 @@
     
 
     
-    \section{Machine Learning and
-Classification}\label{machine-learning-and-classification}
+    \section{Machine Learning and Classification : Rapport de
+projet}\label{machine-learning-and-classification-rapport-de-projet}
 
-\subsection{Rapport du projet}\label{rapport-du-projet}
-
-\emph{Par BENAMIRA Adrien, CARRIE Hanaé et DEVILLERS Benjamin}
+\emph{Par BENAMIRA Adrien, CARRIÉ Hanaé et DEVILLERS Benjamin}
 
 \subsection{PLAN :}\label{plan}
 
-XXX
+(donné par le prof.)\\
+a. L'étape de prétraitement des données\\
+b. L'extraction de features (s'il en est)\\
+c. Une description théorique (et aussi pédagogique que possible) du
+modèle utilisé\\
+d. Le protocole de validation croisée utilisée\\
+e. Présentation des résultats, figures, etc....
 
     \subsection{1. Introduction}\label{introduction}
 
@@ -350,7 +354,7 @@ classes ne sont pas équilibrées, nous pouvons également ne récupérer
 qu'un sous-ensemble du dataset équilibré.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{data} \PY{k}{import} \PY{n}{DreemDatasets}
+{\color{incolor}In [{\color{incolor}34}]:} \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{data} \PY{k}{import} \PY{n}{DreemDatasets}
 \end{Verbatim}
 
 
@@ -423,20 +427,20 @@ qu'un sous-ensemble du dataset équilibré.
 \end{itemize}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
-                                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
-                                           \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} 
-                                           \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} 
-                                           \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
-        
-        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Load les données en mémoire}
-        
-        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}
-        
-        \PY{c+c1}{\PYZsh{} Ne pas oublier de fermer les datasets}
-        \PY{c+c1}{\PYZsh{} Ne ferme que les fichiers h5. Si .load\PYZus{}data() a été appelé, on a toujours accès aux données !}
-        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
-        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}36}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} 
+                                            \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} 
+                                            \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Load les données en mémoire}
+         
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{load\PYZus{}data}\PY{p}{(}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} Ne pas oublier de fermer les datasets}
+         \PY{c+c1}{\PYZsh{} Ne ferme que les fichiers h5. Si .load\PYZus{}data() a été appelé, on a toujours accès aux données !}
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
 
 
@@ -456,15 +460,15 @@ Done.
 données}\label{ruxe9cupuxe9ration-des-donnuxe9es}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}7}]:} \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{target} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}  \PY{c+c1}{\PYZsh{} Une valeur}
-        
-        \PY{c+c1}{\PYZsh{} Dimension nb\PYZus{}datasets x tailles\PYZus{}features}
-        \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
-        
-        \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{targets} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}  \PY{c+c1}{\PYZsh{} 10 valeurs}
-        \PY{c+c1}{\PYZsh{} Dimension nb\PYZus{}datasets x nb\PYZus{}elements (=10) x tailles\PYZus{}features}
-        
-        \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}37}]:} \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{target} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}  \PY{c+c1}{\PYZsh{} Une valeur}
+         
+         \PY{c+c1}{\PYZsh{} Dimension nb\PYZus{}datasets x tailles\PYZus{}features}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+         
+         \PY{n}{data\PYZus{}50hz}\PY{p}{,} \PY{n}{data\PYZus{}10hz}\PY{p}{,} \PY{n}{targets} \PY{o}{=} \PY{n}{train\PYZus{}set}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}  \PY{c+c1}{\PYZsh{} 10 valeurs}
+         \PY{c+c1}{\PYZsh{} Dimension nb\PYZus{}datasets x nb\PYZus{}elements (=10) x tailles\PYZus{}features}
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{data\PYZus{}50hz}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
 \end{Verbatim}
 
 
@@ -494,14 +498,14 @@ La sauvegarde enregistre les données \textbf{transformée}. Les données
 brutes ne sont pas enregistrées.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}8}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
-                                           \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
-        
-        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{save\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Attention, pas de / à la fin !}
-        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{save\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/val}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        
-        \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
-        \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}38}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                                            \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{save\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Attention, pas de / à la fin !}
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{save\PYZus{}data}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/sauvegarde/val}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         
+         \PY{n}{train\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+         \PY{n}{val\PYZus{}set}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
 
 
@@ -520,7 +524,7 @@ Saved.
 fichiers
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+{\color{incolor}In [{\color{incolor}39}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
                                             \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}
          
          \PY{c+c1}{\PYZsh{} Cela remplace les données données des fichiers h5.}
@@ -556,7 +560,7 @@ On peut faire la même chose avec le test set qu'avec les autres données.
 Attention à bien appeler \texttt{init()}.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}12}]:} \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{data} \PY{k}{import} \PY{n}{DreemDataset}
+{\color{incolor}In [{\color{incolor}40}]:} \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{data} \PY{k}{import} \PY{n}{DreemDataset}
          
          \PY{n}{test\PYZus{}set} \PY{o}{=} \PY{n}{DreemDataset}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/test.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{keep\PYZus{}datasets}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eeg\PYZus{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{init}\PY{p}{(}\PY{p}{)}
          
@@ -585,12 +589,12 @@ sur nos données. Pour effectuer des transformations sur nos données,
 nous devons definir un dictionnaire :
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}4}]:} \PY{k}{def} \PY{n+nf}{transformation\PYZus{}eeg\PYZus{}1}\PY{p}{(}\PY{n}{batch\PYZus{}signals}\PY{p}{,} \PY{n}{batch\PYZus{}targets}\PY{p}{)}\PY{p}{:}
-            \PY{k}{return} \PY{n}{batch\PYZus{}signals}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}
-        
-        \PY{n}{transformations} \PY{o}{=} \PY{p}{\PYZob{}}
-            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{eeg\PYZus{}1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{transformation\PYZus{}eeg\PYZus{}1}
-        \PY{p}{\PYZcb{}}
+{\color{incolor}In [{\color{incolor}41}]:} \PY{k}{def} \PY{n+nf}{transformation\PYZus{}eeg\PYZus{}1}\PY{p}{(}\PY{n}{batch\PYZus{}signals}\PY{p}{,} \PY{n}{batch\PYZus{}targets}\PY{p}{)}\PY{p}{:}
+             \PY{k}{return} \PY{n}{batch\PYZus{}signals}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}
+         
+         \PY{n}{transformations} \PY{o}{=} \PY{p}{\PYZob{}}
+             \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{eeg\PYZus{}1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{transformation\PYZus{}eeg\PYZus{}1}
+         \PY{p}{\PYZcb{}}
 \end{Verbatim}
 
 
@@ -650,12 +654,12 @@ Nous ne considerons donc pour cela pas la bande \(\gamma\) et gardon la
 bande \(\beta\) que de 13 à 22 Hz.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}13}]:} \PY{k+kn}{from} \PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{signals} \PY{k}{import} \PY{n}{ExtractBands}
+{\color{incolor}In [{\color{incolor}42}]:} \PY{k+kn}{from} \PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{signals} \PY{k}{import} \PY{n}{ExtractBands}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}14}]:} \PY{n}{extract\PYZus{}bands} \PY{o}{=} \PY{n}{ExtractBands}\PY{p}{(}\PY{n}{bands}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} toutes les bandes (de delta à beta)}
+{\color{incolor}In [{\color{incolor}43}]:} \PY{n}{extract\PYZus{}bands} \PY{o}{=} \PY{n}{ExtractBands}\PY{p}{(}\PY{n}{bands}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} toutes les bandes (de delta à beta)}
 \end{Verbatim}
 
 
@@ -663,7 +667,7 @@ bande \(\beta\) que de 13 à 22 Hz.
 appliquer aux eegs et qui sort des signaux extraits en bande :
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}16}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+{\color{incolor}In [{\color{incolor}44}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
                                             \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
                                             \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} 
                                             \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} 
@@ -737,7 +741,7 @@ fenêtre parmi toutes les bandes. Cela donne une indication de la bande
 prédominante sur la fenêtre.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}18}]:} \PY{c+c1}{\PYZsh{} Transformation pour ces featyres}
+{\color{incolor}In [{\color{incolor}45}]:} \PY{c+c1}{\PYZsh{} Transformation pour ces featyres}
          \PY{k+kn}{from} \PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{features} \PY{k}{import} \PY{n}{ExtractFeatures}
          
          \PY{c+c1}{\PYZsh{} Extract features peut directement extraire les bandes}
@@ -746,7 +750,7 @@ prédominante sur la fenêtre.
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}27}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+{\color{incolor}In [{\color{incolor}46}]:} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set} \PY{o}{=} \PY{n}{DreemDatasets}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train.h5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
                                             \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset/train\PYZus{}y.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
                                             \PY{n}{split\PYZus{}train\PYZus{}val}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} 
                                             \PY{n}{seed}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} 
@@ -833,38 +837,39 @@ spatiale commune des bancs de filtres.
 Dans notre cas nous utiliserons les paramètres suivants :
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}5}]:} \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
-        \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{filters} \PY{k}{import} \PY{n}{load\PYZus{}filterbank}
-        \PY{k+kn}{from} \PY{n+nn}{IPython}\PY{n+nn}{.}\PY{n+nn}{display} \PY{k}{import} \PY{n}{Image}
-        \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{csp} \PY{k}{import} \PY{n}{generate\PYZus{}projection}\PY{p}{,} \PY{n}{generate\PYZus{}eye}\PY{p}{,} \PY{n}{extract\PYZus{}feature}
-        \PY{k+kn}{from} \PY{n+nn}{preprocessing} \PY{k}{import} \PY{n}{Compose}\PY{p}{,} \PY{n}{ExtractBands}\PY{p}{,} \PY{n}{ExtractSpectrum}
-        
-        \PY{n}{fs} \PY{o}{=} \PY{l+m+mf}{50.}  \PY{c+c1}{\PYZsh{} sampling frequency}
-        \PY{n}{NO\PYZus{}channels} \PY{o}{=} \PY{l+m+mi}{7}  \PY{c+c1}{\PYZsh{} number of EEG channels}
-        \PY{n}{NO\PYZus{}riem} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{NO\PYZus{}channels} \PY{o}{*} \PY{n}{NO\PYZus{}channels} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{/} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} Total number of CSP feature per band and timewindow}
-        \PY{n}{bw} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{13}\PY{p}{,} \PY{l+m+mi}{22}\PY{p}{]}\PY{p}{)}
-        \PY{n}{ftype} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{butter}\PY{l+s+s1}{\PYZsq{}}  \PY{c+c1}{\PYZsh{} \PYZsq{}fir\PYZsq{}, \PYZsq{}butter\PYZsq{}}
-        \PY{n}{forder} \PY{o}{=} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} 4}
-        \PY{n}{filter\PYZus{}bank} \PY{o}{=} \PY{n}{load\PYZus{}filterbank}\PY{p}{(}\PY{n}{bw}\PY{p}{,} \PY{n}{fs}\PY{p}{,} \PY{n}{order}\PY{o}{=}\PY{n}{forder}\PY{p}{,} \PY{n}{max\PYZus{}freq}\PY{o}{=}\PY{l+m+mi}{23}\PY{p}{,} \PY{n}{ftype}\PY{o}{=}\PY{n}{ftype}\PY{p}{)}  \PY{c+c1}{\PYZsh{} get filterbank coeffs}
-        \PY{n}{time\PYZus{}windows\PYZus{}flt} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{30}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{30}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{]}\PY{p}{,}
-                                     \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{]}
-        \PY{p}{]}\PY{p}{)} \PY{o}{*} \PY{n}{fs}
-        \PY{n}{time\PYZus{}windows} \PY{o}{=} \PY{n}{time\PYZus{}windows\PYZus{}flt}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
-        \PY{n}{NO\PYZus{}bands} \PY{o}{=} \PY{n}{filter\PYZus{}bank}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-        \PY{n}{NO\PYZus{}csp} \PY{o}{=} \PY{l+m+mi}{24}  \PY{c+c1}{\PYZsh{} Total number of CSP feature per band and timewindow}
-        \PY{n}{useCSP} \PY{o}{=} \PY{k+kc}{False}
-        
-        \PY{n}{Image}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{fig1.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}47}]:} \PY{k+kn}{import} \PY{n+nn}{os}
+         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+         \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{filters} \PY{k}{import} \PY{n}{load\PYZus{}filterbank}
+         \PY{k+kn}{from} \PY{n+nn}{IPython}\PY{n+nn}{.}\PY{n+nn}{display} \PY{k}{import} \PY{n}{Image}
+         \PY{k+kn}{from} \PY{n+nn}{tools}\PY{n+nn}{.}\PY{n+nn}{csp} \PY{k}{import} \PY{n}{generate\PYZus{}projection}\PY{p}{,} \PY{n}{generate\PYZus{}eye}\PY{p}{,} \PY{n}{extract\PYZus{}feature}
+         \PY{k+kn}{from} \PY{n+nn}{preprocessing} \PY{k}{import} \PY{n}{Compose}\PY{p}{,} \PY{n}{ExtractBands}\PY{p}{,} \PY{n}{ExtractSpectrum}
+         
+         \PY{n}{fs} \PY{o}{=} \PY{l+m+mf}{50.}  \PY{c+c1}{\PYZsh{} sampling frequency}
+         \PY{n}{NO\PYZus{}channels} \PY{o}{=} \PY{l+m+mi}{7}  \PY{c+c1}{\PYZsh{} number of EEG channels}
+         \PY{n}{NO\PYZus{}riem} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{NO\PYZus{}channels} \PY{o}{*} \PY{n}{NO\PYZus{}channels} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{/} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} Total number of CSP feature per band and timewindow}
+         \PY{n}{bw} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{13}\PY{p}{,} \PY{l+m+mi}{22}\PY{p}{]}\PY{p}{)}
+         \PY{n}{ftype} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{butter}\PY{l+s+s1}{\PYZsq{}}  \PY{c+c1}{\PYZsh{} \PYZsq{}fir\PYZsq{}, \PYZsq{}butter\PYZsq{}}
+         \PY{n}{forder} \PY{o}{=} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} 4}
+         \PY{n}{filter\PYZus{}bank} \PY{o}{=} \PY{n}{load\PYZus{}filterbank}\PY{p}{(}\PY{n}{bw}\PY{p}{,} \PY{n}{fs}\PY{p}{,} \PY{n}{order}\PY{o}{=}\PY{n}{forder}\PY{p}{,} \PY{n}{max\PYZus{}freq}\PY{o}{=}\PY{l+m+mi}{23}\PY{p}{,} \PY{n}{ftype}\PY{o}{=}\PY{n}{ftype}\PY{p}{)}  \PY{c+c1}{\PYZsh{} get filterbank coeffs}
+         \PY{n}{time\PYZus{}windows\PYZus{}flt} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{30}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{30}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{]}\PY{p}{,}
+                                      \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{]}
+         \PY{p}{]}\PY{p}{)} \PY{o}{*} \PY{n}{fs}
+         \PY{n}{time\PYZus{}windows} \PY{o}{=} \PY{n}{time\PYZus{}windows\PYZus{}flt}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
+         \PY{n}{NO\PYZus{}bands} \PY{o}{=} \PY{n}{filter\PYZus{}bank}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+         \PY{n}{NO\PYZus{}csp} \PY{o}{=} \PY{l+m+mi}{24}  \PY{c+c1}{\PYZsh{} Total number of CSP feature per band and timewindow}
+         \PY{n}{useCSP} \PY{o}{=} \PY{k+kc}{False}
+         
+         \PY{n}{Image}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{figures}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{fig1.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 
-\texttt{\color{outcolor}Out[{\color{outcolor}5}]:}
+\texttt{\color{outcolor}Out[{\color{outcolor}47}]:}
     
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_34_0.png}
@@ -915,9 +920,24 @@ features}\label{comparaison-de-toutes-les-features}
     Notre base de données est déséquilibré :
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor} }]:} \PY{n}{XXX}
+{\color{incolor}In [{\color{incolor}95}]:} \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+         \PY{n}{label\PYZus{}train} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/data/train\PYZus{}label.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{p}{(}\PY{n}{n}\PY{p}{,} \PY{n}{bins}\PY{p}{,} \PY{n}{patches}\PY{p}{)} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{n}{label\PYZus{}train}\PY{p}{,} \PY{n}{density}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{5}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{percentage per stage: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{n}\PY{o}{*}\PY{l+m+mi}{100}\PY{p}{)}
 \end{Verbatim}
 
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_42_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+percentage per stage:  [ 9.45180078  3.53365196 44.74392123 14.96774531 27.30288072]
+
+    \end{Verbatim}
 
     Nous avons donc tester toutes nos features sur deux approches : un
 subdataset équilibré et sur tout le dataset. Pour chaque test nous
@@ -977,6 +997,547 @@ All\_features\_method\_balanced.ipynb) :
 nous obtenons de biens moins bons scores sur le Kaggle (environ 59\%)
 contre 64.22\% pour le all dataset avec la meilleure configuration. On
 en déduit que le test set doit être très proche du tran set
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Sélection des features (caractéristiques)
+\end{enumerate}
+
+    \section{3. Modèle de classification : évaluation, optimisation et
+choix}\label{moduxe8le-de-classification-uxe9valuation-optimisation-et-choix}
+
+\subsection{3.1. Principe des modèles de classification
+étudiés}\label{principe-des-moduxe8les-de-classification-uxe9tudiuxe9s}
+
+Voici une explication théorique et aussi pédagogique que possible des
+différents modèles considérés.
+
+    \subsubsection{\texorpdfstring{3.1.1. \emph{Random
+Forest}}{3.1.1. Random Forest}}\label{random-forest}
+
+Il s'agit d'un algorithme utilisant une technique ensembliste adaptée à
+la classification multi-classes et proposé en 2001 par Breiman \&
+Cutter.
+
+\paragraph{Principe}\label{principe}
+
+L'élément de base est l'\textbf{arbre décisionnel ou arbre CART}
+(Classi􏰂cation And Regression Tree) qui permet de décomposer le problème
+de classification en une suite de tests correspondant à une partition de
+l'espace des données en sous-régions homogènes en terme de classe.\\
+Il est construit de manière \emph{récursive} à partir d'une base
+d'apprentissage. Ces arbres fournissent non seulement une solution au
+problème de classi􏰂cation mais permettent également de retracer les
+questions à poser pour e􏰀ffectuer ce choix.
+
+Les forêts sont en général plus efficaces que les simples arbres de
+décision, dont la construction dépend de l'échantillon initial et qui
+sont fortement instables, mais possèdent l'inconvénient d'être plus
+di􏰃fficilement interprétables.\\
+Une \textbf{forêt aléatoire} est un ensemble d'arbres de décision
+binaires dans lequel a été introduit de l'aléatoire dans le but
+d'obtenir des \emph{arbres les plus décorrélés possibles}. De cette
+manière, on ne construit plus un seul arbre de décision mais plusieurs
+arbres de décision, chacun ayant ses propres caractéristiques dues à
+l'aléa introduit.\\
+Le nouveau classifi􏰂eur correspondant à la forêt aléatoire est calculé
+par \emph{vote majoritaire}, soit en prenant la majorité des votes de
+chacun des classifi􏰂eurs. Ce n'est donc plus l'arbre qui vote, mais la
+forêt (aléatoire) cachée derrière.\\
+La forêt aléatoire constitue ainsi un modèle plus \emph{stable} que
+l'arbre décisionnel.
+
+􏰁\textbf{\emph{Random Forest}} est un type de forêt aléatoire qui
+consiste pour à mélanger les arbres CART, le \emph{bagging}
+(\emph{boostrap aggregating}) et le \emph{random subspace}.\\
+Le principe simplifié de l'algorithme est décrit par le schéma
+ci-dessous (fig 1.).\\
+Pour chaque arbre, on tire un échantillon à partir de l'échantillon
+initial. A chaque noeud, on choisit aléatoirement K variables et on
+prend, parmi celles-ci, celle qui minimise le critère de l'algorithme
+CART. On laisse grandir l'arbre jusqu'à ce qu'il n'y ait plus qu'un seul
+élément dans chaque noeud.
+
+\paragraph{\texorpdfstring{Deux approches: multi-classes ou
+\emph{one-vs-all}}{Deux approches: multi-classes ou one-vs-all}}\label{deux-approches-multi-classes-ou-one-vs-all}
+
+Les deux approches sont illustrées ci-dessous (fig.3).
+
+L'approche plus classique \textbf{multi-classes} a d'abord été testée.
+Le même algorithme est capable de distinguer les labels \{0,1,2,3,4\}.
+
+Puis, l'approche \textbf{\emph{one-vs-all}} a été explorée dans laquelle
+on construit successivement plusieurs modèles de classification
+binaires. On attribue donc les labels classe par classe. Dans notre
+problème, l'ordre des labels à attribuer est le suivant : 1.
+différencier parmi les données les labels \{2, ≠2\} (classifieur \#1)
+puis retirer les labels égaux à 2 2. différencier parmi le reste les
+labels \{4, ≠4\} (classifieur \#2) puis retirer les labels égaux à 4 3.
+différencier parmi le reste les labels \{3, ≠3\} (classifieur \#3) puis
+retirer les labels égaux à 3 4. différencier parmi le reste les labels
+\{0, 1(≠0)\} (classifieur \#4) puis conclure
+
+Notons qu'aucun classifieur ne sera parfait. Ainsi, pour l'entraînement,
+on retire à chaque étape les données correspondant \emph{réellement aux
+labels i} afin que pour l'étape suivante la base d'apprentissage ne
+contienne aucun de ces labels i. Mais, pour le test, on retirera les
+données correspondant aux \emph{labels prédits i} par le classifieur. Le
+reste contiendra donc certaines erreurs (faux-positifs prédits i mais
+non égaux à i et faux-négatifs prédits comme non i mais égaux à i).
+
+    \subsubsection{\texorpdfstring{3.1.2. \emph{Gradient Boosting Decision
+Tree}}{3.1.2. Gradient Boosting Decision Tree}}\label{gradient-boosting-decision-tree}
+
+\paragraph{Algorithme classique}\label{algorithme-classique}
+
+Le \textbf{classifieur \emph{Gradient Boosting}} combine les éléments
+suivants : \emph{boosting} (renforcement), descente de gradient et arbre
+décisionnel.
+
+Le \textbf{\emph{boosting}} pour la classification en Machine Learning
+consiste à construire un ensemble de classifieurs de façon
+\textbf{incrémentale}. A chaque étape, nous ajoutons un nouveau
+\textbf{sous-modèle} simple de petit \textbf{arbre décisionnel}
+(principe expliqué plus haut) pour éviter l'\emph{overfitting}, qui
+essaie de \textbf{compenser les erreurs} faites par les sous-modèles
+précédents.\\
+Ce principe est illustré schématiquement plus bas (fig.4). L'algorithme
+de \emph{gradient boosting} classique fait pousser les arbres
+\textbf{horizontalement}, c'est-à-dire qu'il fait croître le niveau de
+l'arbre.
+
+Cette procédure de \emph{boosting} peut être considérée comme une forme
+de descente de gradient.\\
+En effet, rappelons que la \textbf{descente en gradient} optimise une
+fonction de perte en appliquant la règle de mise à jour suivante à
+plusieurs reprises :\\
+
+\begin{equation*}
+x = x = x - η∇Loss(x)
+\end{equation*}
+
+où ∇Loss(x) est le gradient de la fonction de perte et η est le taux
+d'apprentissage
+
+L'observation clé à retenir ici est que le gradient (négatif) de la
+fonction de perte d'erreur au carré, évalué à la valeur de sortie
+\(\hat{y}\), est le même que le résiduel (multiplié par 2) :\\
+
+\begin{equation*}
+Loss(yi,\hat{y}) = (yi - \hat{y})^2  \\
+-∇Loss(\hat{y}) = 2*(yi - \hat{y})  
+\end{equation*}
+
+Or, dans l'algorithme de \emph{boosting}, on ajoute à chaque itération
+un sous-modèle \textbf{qui essaie d'imiter le négatif de cette perte},
+d'où le lien avec la descente de gradient. Le taux d'apprentissage η
+serait de 1 dans ce cas.
+
+\paragraph{\texorpdfstring{\emph{Light
+GBM}}{Light GBM}}\label{light-gbm}
+
+\textbf{Light GBM} est un gradient boosting framework qui utilise un
+algorithme d'apprentissage basé sur l'arbre décisionnel. Lien vers la
+documentation : https://lightgbm.readthedocs.io/en/latest/index.html.\\
+Light GBM fait pousser l'arbre \textbf{verticalement}, soit les feuilles
+de l'arbre, contrairement à l'agorithme classique de \emph{gradient
+boosting} vu précédemment. Le principe est illustré ci-dessous (fig.5).
+Il choisira la feuille avec une perte ∇ maximale pour grandir. Lorsqu'on
+cultive la même feuille, l'algorithme de Leaf-wise peut réduire plus de
+pertes qu'un algorithme de niveau.
+
+Light GBM peut gérer la grande taille des données et nécessite moins de
+mémoire pour fonctionner que le Gradient Boosting classique. Le préfixe
+'Light' fait référence à la vitesse d'apprentissage plus élevée de
+l'algorithme. Cet algorithme est recommandé pour des grands datasets
+(\textgreater{} 10000 éléments) uniquement, ce qui est notre cas, car il
+est sensible à l'\emph{overfitting} sinon.
+
+    \subsubsection{\texorpdfstring{3.1.4. Comparaison \emph{a priori} des
+modèles}{3.1.4. Comparaison a priori des modèles}}\label{comparaison-a-priori-des-moduxe8les}
+
+\begin{longtable}[]{@{}llll@{}}
+\toprule
+\begin{minipage}[b]{0.32\columnwidth}\raggedright\strut
+Algorithme\strut
+\end{minipage} & \begin{minipage}[b]{0.17\columnwidth}\raggedright\strut
+Avantages\strut
+\end{minipage} & \begin{minipage}[b]{0.20\columnwidth}\raggedright\strut
+Inconvénients\strut
+\end{minipage} & \begin{minipage}[b]{0.20\columnwidth}\raggedright\strut
+Usage habituel\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Random Forest\strut
+\end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+rapidité Robuste aux datasets bruités\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+Biaisé si classes non-équilibrées envers la classe la plus
+représentée\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+Polyvalent\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Gradient Boosting\strut
+\end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+Bonne précision (rapidité et adapté aux grands datasets avec Light
+GBM)\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+Peut \emph{overfitter} facilement Réglage des paramètres important\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+Polyvalent\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+    \subsection{3.2. Protocole de validation croisée pour l'évaluation de la
+performance}\label{protocole-de-validation-croisuxe9e-pour-luxe9valuation-de-la-performance}
+
+    Afin d'estimer la performance du modèle entraîné, nous devons choisir un
+protocole de validation croisé parmi (entre autres): -
+\textbf{leave-one-out (LOO)}\\
+On entraîne N modèles sur N-1 échantillons et on les teste
+respectivement sur l'échantillon retiré. - \textbf{K-fold}\\
+Son principe est illustré ci-dessous pour K=5 (fig.7). On entraine K
+modèles (K
+
+    \subsection{3.3. Réglage des
+hyperparamètres}\label{ruxe9glage-des-hyperparamuxe8tres}
+
+    Pour trouver le meilleur lot de paramètres, on réalise souvent une
+\textbf{recherche exhaustive par grille} d'hyperparamètres. Ici, nous
+avons opté pour une \textbf{recherche aléatoire}. Les deux démarches
+sont décrites ci-dessous (fig.8). La recherche aléatoire et la recherche
+par grille explorent exactement \textbf{le même espace de paramètres}.
+Le résultat des réglages de paramètres est assez similaire, tandis que
+le \textbf{temps d'exécution} de la recherche aléatoire est nettement
+inférieur.\\
+Pour s'assurer que les grilles de recherche sont pertinentes, on
+veillera à ce que le meilleur paramètre trouvé dans la grille ne soit
+pas un paramètre extrême de la grille.
+
+Pour chaque modèle, on emploira la démarche suivante : - sélectionner
+quelques paramètres à ajuster et éventuellement un ordre de priorité -
+ne garder que 20\% du train par soucis de rapidité et les mêmes 20\% par
+soucis de reproductibilité - recherche aléatoire des meilleurs
+hyperparamètres avec une crossvalidation K-fold avec K=3 (et non K=10,
+par soucis de rapidité) - pour les meilleurs paramètres, estimer plus
+finement les performances avec une crossvalidation K-fold avec K=10 sur
+80\% du train - enfin, entraîner le modèle avec ces mêmes paramètres sur
+tout le train
+
+    \subsubsection{3.3.1. Random Forest}\label{random-forest}
+
+Les paramètres par défaut du modèle implémenté sur la bibliothèque
+scikit-learn sont :
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}24}]:} \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{ensemble} \PY{k}{import} \PY{n}{RandomForestClassifier}
+         \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+         \PY{n}{rf} \PY{o}{=} \PY{n}{RandomForestClassifier}\PY{p}{(}\PY{p}{)}
+         \PY{n}{rf\PYZus{}default\PYZus{}params} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{rf}\PY{o}{.}\PY{n}{get\PYZus{}params}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RandomForest}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+         \PY{n}{rf\PYZus{}default\PYZus{}params}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}24}]:}               bootstrap class\_weight criterion max\_depth max\_features  \textbackslash{}
+         RandomForest       True         None      gini      None         auto   
+         
+                      max\_leaf\_nodes  min\_impurity\_decrease min\_impurity\_split  \textbackslash{}
+         RandomForest           None                    0.0               None   
+         
+                       min\_samples\_leaf  min\_samples\_split  min\_weight\_fraction\_leaf  \textbackslash{}
+         RandomForest                 1                  2                       0.0   
+         
+                      n\_estimators n\_jobs  oob\_score random\_state  verbose  warm\_start  
+         RandomForest         warn   None      False         None        0       False  
+\end{Verbatim}
+            
+    \emph{n\_estimators} (nombre d'arbres dans la forêt ) et
+\emph{max\_features} (taille des sous-ensembles aléatoires de
+caractéristiques à prendre en compte lors du fractionnement d'un nœud)
+sont les principaux paramètres à ajuster. On veut donc les considérer en
+priorité. Mais, en raison du compromis temps/qualité posé par
+\emph{n\_estimators}, il s'agira du dernier paramètre à estimer. Les
+autres paramètres qui influencent l'apprentissage sont :
+\emph{max\_depth}, \emph{min\_sample\_leaf}, \emph{min\_sample\_split}
+et \emph{class\_weight}.
+
+En pratique, on ajustera les paramètres ainsi : 1.
+\textbf{\emph{max\_features}} : {[}'auto', 0.9, 0.95, 0.98, 0.99, 0.995,
+0.998, 0.999, None{]}\\
+Les bonnes valeurs empiriques par défaut sont
+\emph{max\_features=sqrt(n\_features)} pour les tâches de
+classification.\\
+Méthode : \emph{GridSearchCV} sur la grille avec paramètres par défaut
+pour le reste, validation croisée K-fold avec K=5 sur 20\% du train.\\
+Résultat : \textbf{max\_features = 0.998} 2. \textbf{\emph{max\_depth}}
+: {[}10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, None{]},
+\textbf{\emph{min\_samples\_leaf}} : {[}1, 2, 4{]} et
+\textbf{\emph{min\_samples\_split}} : {[}2, 5, 10{]}\\
+De bons résultats sont souvent obtenus en réglant max\_depth=None en
+combinaison avec min\_samples\_split=2 (c'est-à-dire lorsque les arbres
+sont en plein développement).\\
+Méthode : \emph{RandomizeGridSearchCV} sur une grille de 100
+combinaisons possibles mais 50 combinaisons aléatoirement choisies
+testées, avec le meilleur \emph{max\_features} et les paramètres par
+défaut pour le reste, validation croisée K-fold avec K=3 sur 20\% du
+train.\\
+Résultats : \textbf{max\_depth = None, min\_samples\_leaf = 2,
+min\_samples\_split = 2} 3. \textbf{\emph{boostrap}} : {[}True,
+False{]}, \textbf{\emph{class\_weight}} : {[}None, 'balanced'{]}\\
+Les échantillons bootstrap sont utilisés par défaut (bootstrap=True)
+alors que la stratégie par défaut pour les arbres supplémentaires est
+d'utiliser l'ensemble des données (bootstrap=False).\\
+Méthode : pour chacune des quatre possibilités, validation croisée
+K-fold avec K=10 sur 20\% du train avec les meilleurs paramètres trouvés
+précedemment et les paramètres par défaut pour le reste.\\
+Résultat : \textbf{class\_weight = None}, \textbf{boostrap = True} 4.
+\textbf{\emph{n\_estimators}} : {[}750, 1000, 1250, 1500, 1750, 2000,
+2250, 2500, 2750, 3000{]}\\
+Plus il est grand, mieux c'est, mais aussi plus il faudra de temps pour
+le calculer. De plus, les résultats cesseront de s'améliorer de façon
+significative au-delà d'un nombre critique d'arbres.\\
+Méthode : \emph{GridSearchCV} sur la grille avec les meilleurs
+paramètres trouvés précedemment et les paramètres par défaut pour le
+reste, validation croisée K-fold avec K=3 sur 20\% du train.\\
+Résultat : \textbf{n\_estimators = 1500}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+\begin{minipage}[b]{0.41\columnwidth}\raggedright\strut
+Modèle\strut
+\end{minipage} & \begin{minipage}[b]{0.26\columnwidth}\raggedright\strut
+Moyenne F1-score sur 20\% du train\strut
+\end{minipage} & \begin{minipage}[b]{0.24\columnwidth}\raggedright\strut
+Écart-type F1-score sur 20\% du train\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.41\columnwidth}\raggedright\strut
+Random Forest, paramètres par défaut\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+0.5595\strut
+\end{minipage} & \begin{minipage}[t]{0.24\columnwidth}\raggedright\strut
+0.78\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.41\columnwidth}\raggedright\strut
+Random Forest, paramètres optimisés\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+0.5711\strut
+\end{minipage} & \begin{minipage}[t]{0.24\columnwidth}\raggedright\strut
+0.93\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}79}]:} \PY{c+c1}{\PYZsh{} load all features for train and test and train labels}
+         \PY{k+kn}{import} \PY{n+nn}{csv}
+         \PY{n}{label\PYZus{}train} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/data/train\PYZus{}label.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{features\PYZus{}train} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/data/all\PYZus{}features\PYZus{}train.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{features\PYZus{}test} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset/data/all\PYZus{}features\PYZus{}test.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{shape all dataset features\PYZus{}train: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{features\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{, features\PYZus{}test: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{features\PYZus{}test}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} final estimation on 80\PYZpc{} of the whole dataset only}
+         \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+         \PY{n}{features}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{label}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{features\PYZus{}train}\PY{p}{,} \PY{n}{label\PYZus{}train}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{shape 20}\PY{l+s+si}{\PYZpc{} d}\PY{l+s+s2}{ataset features: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{features}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{, X\PYZus{}test: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{label}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+shape all dataset features\_train:  (38289, 1366) , features\_test:  (37439, 1366)
+shape 20\% dataset features:  (30631, 1366) , X\_test:  30631
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}91}]:} \PY{c+c1}{\PYZsh{} random forest hyperparameter tuning}
+         \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k}{import} \PY{n}{cross\PYZus{}val\PYZus{}score}
+         \PY{n}{best\PYZus{}RF\PYZus{}params} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}features}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mf}{0.998}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}split}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{2}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}leaf}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{2}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}depth}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{class\PYZus{}weight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bootstrap}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{True}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{n\PYZus{}estimators}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{1500}\PY{p}{\PYZcb{}}
+         \PY{n}{rf} \PY{o}{=} \PY{n}{RandomForestClassifier}\PY{p}{(}\PY{o}{*}\PY{o}{*}\PY{n}{best\PYZus{}RF\PYZus{}params}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{} rf\PYZus{}cv\PYZus{}score = cross\PYZus{}val\PYZus{}score(rf, features, label, cv=10, verbose=10) \PYZsh{} final evaluation K\PYZhy{}foldCV (K=10) on 80\PYZpc{} of the whole dataset}
+         \PY{c+c1}{\PYZsh{} rf.fit(features\PYZus{}train, label\PYZus{}train) \PYZsh{} train the model with best parameters on the whole dataset}
+         \PY{c+c1}{\PYZsh{} rf.predict(features\PYZus{}test) \PYZsh{} apply on test set}
+\end{Verbatim}
+
+
+    \subsubsection{3.3.2. Gradient Boosting}\label{gradient-boosting}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}25}]:} \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{ensemble} \PY{k}{import} \PY{n}{GradientBoostingClassifier}
+         \PY{n}{gb} \PY{o}{=} \PY{n}{GradientBoostingClassifier}\PY{p}{(}\PY{p}{)}
+         \PY{n}{gb\PYZus{}default\PYZus{}params} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{gb}\PY{o}{.}\PY{n}{get\PYZus{}params}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{GradientBoosting}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+         \PY{n}{gb\PYZus{}default\PYZus{}params}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}25}]:}                      criterion  init  learning\_rate      loss  max\_depth  \textbackslash{}
+         GradientBoosting  friedman\_mse  None            0.1  deviance          3   
+         
+                          max\_features max\_leaf\_nodes  min\_impurity\_decrease  \textbackslash{}
+         GradientBoosting         None           None                    0.0   
+         
+                          min\_impurity\_split  min\_samples\_leaf     {\ldots}      \textbackslash{}
+         GradientBoosting               None                 1     {\ldots}       
+         
+                           min\_weight\_fraction\_leaf  n\_estimators  n\_iter\_no\_change  \textbackslash{}
+         GradientBoosting                       0.0           100              None   
+         
+                          presort random\_state subsample     tol  validation\_fraction  \textbackslash{}
+         GradientBoosting    auto         None       1.0  0.0001                  0.1   
+         
+                           verbose  warm\_start  
+         GradientBoosting        0       False  
+         
+         [1 rows x 21 columns]
+\end{Verbatim}
+            
+    On ajustera tous les paramètres qui influencent le résultat en même
+temps à l'exception du \emph{n\_estimators}, en raison du compromis
+temps/qualité qu'il pose. De plus, on ne peut ajuster en même temps le
+\emph{learning\_rate} et \emph{n\_estimators} car il est nécessaire de
+trouver un compromis entre ces deux paramètres.
+
+En pratique, on ajustera les paramètres ainsi : 1.
+\textbf{\emph{max\_depth}} : {[}10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
+110, None{]}, \textbf{\emph{min\_sample\_leaf}} : {[}1, 2, 4{]} et
+\textbf{\emph{min\_sample\_split}} : {[}2, 5, 10{]},
+\textbf{\emph{subsample}} : {[}0.8, 1.0{]},
+\textbf{\emph{learning\_rate}} : {[}1, 0.1, 0.01, 0.001, 0.0001{]},
+\textbf{\emph{max\_features}} : {[}'auto', 'log2', 0.95, 0.98, 0.99,
+0.995, None{]}\\
+Méthode : \emph{RandomizeGridSearchCV} sur une grille de 100
+combinaisons possibles mais 20 combinaisons aléatoirement choisies
+testées, avec les paramètres par défaut pour le reste, validation
+croisée K-fold avec K=3 sur 20\% du .\\
+Résultats : \textbf{max\_depth = 100, min\_sample\_leaf = 4,
+min\_sample\_split = 5, subsample = 0.8, learning\_rate = 0.1,
+max\_features = 0.99.} 2. \textbf{\emph{n\_estimators}} : {[}500, 700,
+1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750{]}\\
+Méthode : \emph{GridSearchCV} sur la grille avec les meilleurs
+paramètres trouvés précedemment et les paramètres par défaut pour le
+reste, validation croisée K-fold avec K=3 sur 20\% du train.\\
+Résultat : \textbf{n\_estimators = 1500}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}92}]:} \PY{c+c1}{\PYZsh{} gradient boosting hyperparameter tuning}
+         \PY{n}{best\PYZus{}GB\PYZus{}params} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{subsample}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mf}{0.8}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}split}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{5}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}leaf}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{4}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}features}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mf}{0.99}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}depth}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{100}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{learning\PYZus{}rate}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mf}{0.1}\PY{p}{,}
+                           \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{n\PYZus{}estimators}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{1500}
+                          \PY{p}{\PYZcb{}}
+         \PY{n}{gb} \PY{o}{=} \PY{n}{GradientBoostingClassifier}\PY{p}{(}\PY{o}{*}\PY{o}{*}\PY{n}{best\PYZus{}GB\PYZus{}params}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{} gb\PYZus{}cv\PYZus{}score = cross\PYZus{}val\PYZus{}score(gb, features, label, cv=10, verbose=10) \PYZsh{} final evaluation K\PYZhy{}foldCV (K=10) on 80\PYZpc{} of the whole dataset}
+         \PY{c+c1}{\PYZsh{} gb.fit(features\PYZus{}train, label\PYZus{}train) \PYZsh{} train the model with best parameters on the whole dataset}
+         \PY{c+c1}{\PYZsh{} y\PYZus{}pred\PYZus{}gb = gb.predict(features\PYZus{}test) \PYZsh{} apply on test set}
+\end{Verbatim}
+
+
+    \subsection{3.4. Autres tentatives}\label{autres-tentatives}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{c+c1}{\PYZsh{}\PYZsh{} One\PYZhy{}vs\PYZhy{}all}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{c+c1}{\PYZsh{} Light gbm }
+        \PY{k+kn}{import} \PY{n+nn}{lightgbm} \PY{k}{as} \PY{n+nn}{lgb}
+        \PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{features\PYZus{}train}\PY{p}{,} \PY{n}{label\PYZus{}train}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.33}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+        \PY{n}{model} \PY{o}{=} \PY{n}{lgb}\PY{o}{.}\PY{n}{LGBMClassifier}\PY{p}{(}\PY{n}{objective}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{binary}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{reg\PYZus{}lambda}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{,}\PY{n}{n\PYZus{}estimators}\PY{o}{=}\PY{l+m+mi}{10000}\PY{p}{)}
+        \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{eval\PYZus{}set}\PY{o}{=}\PY{p}{[}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test}\PY{p}{)}\PY{p}{]}\PY{p}{,} \PY{n}{early\PYZus{}stopping\PYZus{}rounds}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{)}
+        \PY{n}{y\PYZus{}pred\PYZus{}lgbm} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{features\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+
+
+    \section{4. Comparaison, choix des modèles \& synthèse des
+résultats}\label{comparaison-choix-des-moduxe8les-synthuxe8se-des-ruxe9sultats}
+
+    Pour évaluer l'augmentation de la performance entre les paramètres par
+défaut et ces paramètres ajustés, on regarde l'évolution du F1-score
+entre avec une validation croisée K-fold, K=10 sur 80\% du training set.
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+\begin{minipage}[b]{0.32\columnwidth}\raggedright\strut
+Modèle et paramètres\strut
+\end{minipage} & \begin{minipage}[b]{0.26\columnwidth}\raggedright\strut
+Résultat de F1-score moyen sur 80\% du dataset en CV\strut
+\end{minipage} & \begin{minipage}[b]{0.32\columnwidth}\raggedright\strut
+Résultat en F1-score en soumission\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Random Forest, paramètres par défaut\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+0.61330\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+0.64223\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Random Forest, paramètres optimisés\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+0.62951\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+0.64303\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Random Forest OneVSall\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Gradient Boosting, paramètres par défaut\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+0.63320\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Gradient Boosting, paramètres optimisés\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+Light GBM\strut
+\end{minipage} & \begin{minipage}[t]{0.26\columnwidth}\raggedright\strut
+0.67140\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+0.64554\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+Ce tableau récapitulatif permet de constater que la richesse des
+\emph{features} permet d'obtenir de bons f1-scores même avec les
+paramètres par défaut des différents modèles. L'apport du réglage des
+hyperparmètres sur les résultats est relativement faible.\\
+Les modèles les plus intéressants à conserver paraissent être le Light
+GBM qui donne les meilleurs résultats en soumission (soit sur 50\% du
+test) ainsi que le Random Forest avec les paramètres optimisés.
 
 
     % Add a bibliography block to the postdoc
